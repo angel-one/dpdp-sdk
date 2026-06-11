@@ -1,0 +1,6 @@
+@import 'tailwindcss';
+
+@theme {
+	--color-primary: #3f5bd9;
+	--shadow-top: 0px -2px 4px rgba(138, 141, 153, 0.16);
+}
