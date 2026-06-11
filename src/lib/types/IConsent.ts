@@ -1,22 +1,99 @@
-export interface IConsentSection {
+export type ConsentButtonAction = 'accept_all' | 'accept_selected' | 'reject';
+export type ConsentButtonVariant = 'primary' | 'secondary';
+export type ConsentPurposeStatus = 'mandatory' | 'optional';
+
+export interface IConsentPurposeSection {
+	key: string;
 	title: string;
-	content: string;
+	icon: string;
+	description: string;
 }
 
-export interface IConsentItem {
+export interface IConsentPurpose {
+	id: string;
+	name: string;
+	version: string;
+	mandatory: boolean;
+	badge: string;
+	locked: boolean;
+	visible: boolean;
+	defaultExpanded: boolean;
+	status: ConsentPurposeStatus;
+	checked: boolean;
+	description: string;
+	bullets: string[];
+	sections: IConsentPurposeSection[];
+	consentStatus?: string;
+}
+
+export interface IConsentNotice {
 	id: string;
 	title: string;
-	mandatory?: boolean;
-	checked?: boolean;
-	expanded?: boolean;
-	sections?: IConsentSection[];
+	subtitle: string;
+	language: string;
+}
+
+export interface IConsentStaticText {
+	fiduciaryDetails: string;
+	withdrawalDetails: string;
+	dataPrincipalRights: string;
+	grievanceRedressal: string;
+	dpoDetails: string;
+}
+
+export interface IConsentLabels {
+	accept: string;
+	reject: string;
+}
+
+export interface IConsentFlags {
+	hasOptionalPurposes: boolean;
+}
+
+export interface IConsentButtonConfig {
+	label: string;
+	action: ConsentButtonAction;
+	variant: ConsentButtonVariant;
+}
+
+export interface IConsentActionSet {
+	primary: IConsentButtonConfig;
+	secondary?: IConsentButtonConfig;
+}
+
+export interface IConsentRecordAction {
+	url: string;
+	method: string;
+	noticeId: string;
+	templateVersion: number;
+	statusConsented: string;
+	statusNotConsented: string;
+	purposeIds: string[];
+}
+
+export interface IConsentActions {
+	record: IConsentRecordAction;
+	allMandatory: IConsentActionSet;
+	hasOptional: IConsentActionSet;
+}
+
+export interface IConsentData {
+	notice: IConsentNotice;
+	purposes: IConsentPurpose[];
+	staticText: IConsentStaticText;
+	labels: IConsentLabels;
+	flags: IConsentFlags;
+	actions: IConsentActions;
 }
 
 export interface IConsentUiResponse {
-	title?: string;
-	introText?: string;
-	consents?: IConsentItem[];
-	[key: string]: unknown;
+	schemaVersion: string;
+	templateKey: string;
+	templateVersion: number;
+	noticeId: string;
+	languageId: string;
+	layout: Record<string, unknown>;
+	data: IConsentData;
 }
 
 export interface IConsentStoreState {
@@ -24,4 +101,10 @@ export interface IConsentStoreState {
 	loading: boolean;
 	error: string | null;
 	data: IConsentUiResponse | null;
+}
+
+export interface IConsentSubmitPayload {
+	action: ConsentButtonAction;
+	selectedPurposeIds: string[];
+	noticeId: string;
 }

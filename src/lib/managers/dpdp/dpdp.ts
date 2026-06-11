@@ -10,7 +10,10 @@ import {
 	setConsentLoading,
 	updateConsentHydration
 } from '$lib/stores/consent.store';
-import type { IConsentUiResponse } from '$lib/types';
+import { buildRecordPayload } from '$lib/utils';
+import { get } from 'svelte/store';
+import { ConsentStore } from '$lib/stores/consent.store';
+import type { IConsentSubmitPayload, IConsentUiResponse } from '$lib/types';
 
 class Dpdp {
 	#isInitialized = false;
@@ -147,6 +150,22 @@ class Dpdp {
 		updateConsentError(error);
 		setConsentLoading(false);
 		updateConsentHydration(false);
+	}
+
+	/**
+	 * Handles a consent action from the UI. Builds the record payload from CMS config;
+	 * POST to record.url will be wired when the record endpoint is integrated.
+	 */
+	async submitConsent(payload: IConsentSubmitPayload) {
+		await this.getIsSdkInitialized();
+
+		const state = get(ConsentStore);
+		if (!state.data) {
+			throw new Error('Cannot submit consent: no consent data loaded');
+		}
+
+		buildRecordPayload(state.data, payload);
+		this.closeConsent();
 	}
 
 	closeConsent() {
