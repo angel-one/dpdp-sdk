@@ -2,27 +2,11 @@
 
 SvelteKit library for DPDP consent management. Ships a bottom sheet UI and loads consent configuration server-first, with an automatic client-side proxy fallback if the server fetch fails.
 
-## Structure
 
-```
-src/lib/
-├── index.js                 # Public exports
-├── server/                  # Server-only CMS fetch helpers
-├── components/
-│   └── bottom-sheet/        # Consent bottom sheet UI
-├── constants/               # CMS base URLs
-├── containers/
-│   └── consent.svelte       # Host mount point
-├── managers/
-│   └── dpdp/                # SDK facade (init, loadConsent, destroy)
-├── stores/                  # Consent reactive state
-├── types/                   # TypeScript contracts
-└── utils/
-```
-
-## Local development
+## How to run
 
 ```bash
+nvm use
 pnpm install
 pnpm dev
 ```
@@ -117,17 +101,3 @@ import { fetchConsentUiFromCms } from 'dpdp-sdk/server';
 ```bash
 pnpm run package
 ```
-
-## CMS API
-
-Server-side fetch target:
-
-```
-GET https://cms-core-uat.internal.angelone.in/v1/consent/ui
-  ?app_code=insurance_app
-  &journey_code=kyc_onboarding
-  &page_code=insurance_kyc_gate
-  &language_code=en
-```
-
-Prod base URL: `https://cms-core.internal.angelone.in`
