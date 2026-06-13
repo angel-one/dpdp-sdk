@@ -96,8 +96,22 @@ dpdp.destroy();
 import { fetchConsentUiFromCms } from 'dpdp-sdk/server';
 ```
 
-## Package
+## Package & publish
+
+Build the distributable (required before tagging a GitHub release — `dist/` is committed so consumers can install via `github:org/dpdp-sdk#v0.1.0`):
 
 ```bash
 pnpm run package
+git add dist
+git commit -m "chore: build dist for release"
+git tag v0.1.0
+git push origin main --tags
 ```
+
+Install in a host SvelteKit app:
+
+```bash
+pnpm add github:your-org/dpdp-sdk#v0.1.0
+```
+
+`prepack` also runs `svelte-package` automatically before `npm publish` / `pnpm pack` if you publish to npm or GitHub Packages later.
