@@ -30,7 +30,7 @@
 	<h1 class="text-xl font-semibold text-gray-900">DPDP SDK Demo</h1>
 	<p class="mt-2 text-sm text-gray-600">
 		Consent UI is loaded server-side in <code>+layout.server.ts</code> with a client-side proxy
-		fallback if the server fetch fails.
+		fallback if the server fetch fails. SvelteKit library for DPDP consent management. Ships a bottom sheet UI and loads consent configuration server-first, with an automatic client-side proxy fallback if the server fetch fails.
 	</p>
 </div>
 
