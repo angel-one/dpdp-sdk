@@ -11,11 +11,7 @@
 	$: zIndexBase = $ConsentStore.uiOptions.zIndexBase ?? 9999;
 
 	async function handleSubmit(payload: IConsentSubmitPayload) {
-		try {
-			await dpdp.submitConsent(payload);
-		} catch {
-			// Error surfaced via ConsentStore.error banner.
-		}
+		await dpdp.submitConsent(payload);
 	}
 
 	function handleClose() {

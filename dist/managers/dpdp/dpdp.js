@@ -1,8 +1,6 @@
-import { DEFAULT_CONSENT_API_PATH, DEFAULT_CONSENT_TIMEOUT_MS, DEFAULT_RECORD_TIMEOUT_MS, DEFAULT_Z_INDEX_BASE } from './types';
-import { resetConsentStore, setConsentData as updateConsentData, setConsentError as updateConsentError, setConsentLoading, setConsentSubmitting, setConsentUiOptions, updateConsentHydration } from '../../stores/consent.store';
-import { buildRecordPayload, isConsentUiResponse } from '../../utils';
-import { get } from 'svelte/store';
-import { ConsentStore } from '../../stores/consent.store';
+import { DEFAULT_CONSENT_API_PATH, DEFAULT_CONSENT_TIMEOUT_MS, DEFAULT_Z_INDEX_BASE } from './types';
+import { resetConsentStore, setConsentData as updateConsentData, setConsentError as updateConsentError, setConsentLoading, setConsentUiOptions, updateConsentHydration } from '../../stores/consent.store';
+import { isConsentUiResponse } from '../../utils';
 function assertNonEmpty(value, field) {
     if (!value?.trim()) {
         throw new Error(`${field} cannot be empty`);
@@ -18,7 +16,6 @@ class Dpdp {
     #languageCode = null;
     #env = null;
     #consentApiPath = DEFAULT_CONSENT_API_PATH;
-    #recordTimeoutMs = DEFAULT_RECORD_TIMEOUT_MS;
     constructor() {
         this.#initInvocationPromise = new Promise((resolve) => {
             this.#invocationResolver = resolve;
@@ -42,7 +39,6 @@ class Dpdp {
         this.#languageCode = config.languageCode.trim();
         this.#env = env;
         this.#consentApiPath = config.consentApiPath ?? DEFAULT_CONSENT_API_PATH;
-        this.#recordTimeoutMs = config.recordTimeoutMs ?? DEFAULT_RECORD_TIMEOUT_MS;
         setConsentUiOptions({
             allowDismiss: config.allowDismiss,
             zIndexBase: config.zIndexBase ?? DEFAULT_Z_INDEX_BASE
@@ -142,48 +138,10 @@ class Dpdp {
         setConsentLoading(false);
         updateConsentHydration(false);
     }
-    /** Submits consent to the CMS record endpoint, then closes the sheet on success. */
-    async submitConsent(payload) {
+    /** Closes the consent sheet after accept/reject. Record POST will be wired when the backend is ready. */
+    async submitConsent(_payload) {
         await this.getIsSdkInitialized();
-        const state = get(ConsentStore);
-        if (!state.data) {
-            throw new Error('Cannot submit consent: no consent data loaded');
-        }
-        const recordRequest = buildRecordPayload(state.data, payload);
-        setConsentSubmitting(true);
-        updateConsentError(null);
-        try {
-            let response;
-            try {
-                response = await fetch(recordRequest.url, {
-                    method: recordRequest.method,
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(recordRequest.body),
-                    signal: AbortSignal.timeout(this.#recordTimeoutMs)
-                });
-            }
-            catch (error) {
-                if (error instanceof DOMException && error.name === 'TimeoutError') {
-                    throw new Error(`Consent record request timed out after ${this.#recordTimeoutMs}ms`);
-                }
-                throw error;
-            }
-            if (!response.ok) {
-                const errorBody = await response.text().catch(() => '');
-                throw new Error(errorBody
-                    ? `Failed to record consent: ${response.status} — ${errorBody}`
-                    : `Failed to record consent: ${response.status}`);
-            }
-            this.closeConsent();
-        }
-        catch (error) {
-            const message = error instanceof Error ? error.message : 'Failed to submit consent';
-            updateConsentError(message);
-            throw error;
-        }
-        finally {
-            setConsentSubmitting(false);
-        }
+        this.closeConsent();
     }
     closeConsent() {
         updateConsentHydration(false);
@@ -199,7 +157,6 @@ class Dpdp {
         this.#languageCode = null;
         this.#env = null;
         this.#consentApiPath = DEFAULT_CONSENT_API_PATH;
-        this.#recordTimeoutMs = DEFAULT_RECORD_TIMEOUT_MS;
         this.#initInvocationPromise = new Promise((resolve) => {
             this.#invocationResolver = resolve;
         });

@@ -51,7 +51,6 @@ $: mandatoryErrorMessage = getMandatoryErrorMessage(labels);
 $: detailConfirmLabel = activePurpose ? getDetailConfirmLabel(activePurpose, labels) : "";
 $: backLabel = getBackLabel(labels);
 $: dismissible = resolveDismissible(data.layout, $ConsentStore.uiOptions.allowDismiss);
-$: submitting = $ConsentStore.submitting;
 $: sheetState.activeDetailPurposeId, scrollSheetToTop();
 function handleToggleSelect(purposeId, locked) {
   sheetState = toggleSelected(sheetState, purposeId, locked);
@@ -78,7 +77,6 @@ async function focusFirstValidationError() {
   firstError?.focus();
 }
 async function handleListAction(action) {
-  if (submitting) return;
   if (shouldBypassValidation(action)) {
     await onSubmit?.(buildSubmitPayload(data, action, sheetState.selectedIds));
     return;
@@ -122,13 +120,12 @@ async function handleListAction(action) {
 			<Button
 				variant="primary"
 				label={detailConfirmLabel}
-				inactive={submitting}
 				onClick={handleDetailConfirm}
 			/>
 		{:else}
 			<ConsentButtonBar
 				{actionSet}
-				inactive={!canSubmit || submitting}
+				inactive={!canSubmit}
 				onAction={handleListAction}
 			/>
 		{/if}

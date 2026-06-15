@@ -64,19 +64,3 @@ export function isConsentUiResponse(value) {
         response.data?.labels?.accept?.trim() &&
         response.data?.labels?.reject?.trim());
 }
-export function buildRecordPayload(response, payload) {
-    const { record } = response.data.actions;
-    return {
-        url: record.url,
-        method: record.method,
-        body: {
-            noticeId: record.noticeId,
-            templateVersion: record.templateVersion,
-            action: payload.action,
-            purposeIds: payload.selectedPurposeIds,
-            status: payload.action === 'reject'
-                ? record.statusNotConsented
-                : record.statusConsented
-        }
-    };
-}

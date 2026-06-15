@@ -21,8 +21,6 @@ Styles ship scoped under `.dpdp-root`. Host apps do **not** need Tailwind `conte
 - Body scroll lock while sheet is open
 - Focus trap with focus restore on close
 - Blocking consent by default (`layout.dismissible` or `allowDismiss` to enable close)
-- Consent record POST to CMS `record.url`
-- Submit / load loading states with spinner
 - Dismissible error banner
 - Safe-area insets, reduced-motion support, 44px touch targets
 - Configurable z-index base (default `9999`)
@@ -130,12 +128,12 @@ By default the sheet is **blocking** — no close button, Escape does nothing. T
 ```javascript
 import { dpdp, Consent } from 'dpdp-sdk';
 
-await dpdp.init({ appCode, journeyCode, pageCode, languageCode, env, consentApiPath, allowDismiss, zIndexBase, recordTimeoutMs });
+await dpdp.init({ appCode, journeyCode, pageCode, languageCode, env, consentApiPath, allowDismiss, zIndexBase });
 await dpdp.loadConsent({ data, error });
 await dpdp.setConsentData(data);
 await dpdp.setConsentError(null);
 await dpdp.fetchConsentUi();
-await dpdp.submitConsent(payload);  // POSTs to CMS record.url
+await dpdp.submitConsent(payload);  // closes the sheet (record POST coming later)
 dpdp.closeConsent();
 dpdp.destroy();
 ```

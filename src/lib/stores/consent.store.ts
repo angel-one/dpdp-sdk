@@ -4,7 +4,6 @@ import type { IConsentStoreState, IConsentUiOptions, IConsentUiResponse } from '
 const initialState: IConsentStoreState = {
 	hydrated: false,
 	loading: false,
-	submitting: false,
 	error: null,
 	data: null,
 	uiOptions: {}
@@ -29,13 +28,6 @@ export function setConsentLoading(loading: boolean) {
 	ConsentStore.update((store) => ({
 		...store,
 		loading
-	}));
-}
-
-export function setConsentSubmitting(submitting: boolean) {
-	ConsentStore.update((store) => ({
-		...store,
-		submitting
 	}));
 }
 

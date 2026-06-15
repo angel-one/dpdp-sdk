@@ -6,7 +6,6 @@ export declare const ConsentStore: {
 };
 export declare function updateConsentHydration(hydrated: boolean): void;
 export declare function setConsentLoading(loading: boolean): void;
-export declare function setConsentSubmitting(submitting: boolean): void;
 export declare function setConsentError(error: string | null): void;
 export declare function setConsentData(data: IConsentUiResponse | null): void;
 export declare function setConsentUiOptions(uiOptions: IConsentUiOptions): void;

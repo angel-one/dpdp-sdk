@@ -1,4 +1,4 @@
-import type { ConsentButtonAction, IConsentActionSet, IConsentData, IConsentLayout, IConsentLabels, IConsentPurpose, IConsentRecordRequest, IConsentSubmitPayload, IConsentUiResponse } from '../types';
+import type { ConsentButtonAction, IConsentActionSet, IConsentData, IConsentLayout, IConsentLabels, IConsentPurpose, IConsentUiResponse } from '../types';
 export declare const DEFAULT_MANDATORY_ERROR_MESSAGE = "This is a mandatory consent. Tick to continue.";
 export declare const DEFAULT_GOT_IT_LABEL = "GOT IT";
 export declare const DEFAULT_BACK_LABEL = "Back to consent list";
@@ -16,4 +16,3 @@ export declare function areAllMandatorySelected(purposes: IConsentPurpose[], sel
 export declare function getUncheckedMandatoryIds(purposes: IConsentPurpose[], selectedIds: Set<string>): string[];
 export declare function resolveSelectedIdsForAction(action: ConsentButtonAction, purposes: IConsentPurpose[], selectedIds: Set<string>): string[];
 export declare function isConsentUiResponse(value: unknown): value is IConsentUiResponse;
-export declare function buildRecordPayload(response: IConsentUiResponse, payload: IConsentSubmitPayload): IConsentRecordRequest;

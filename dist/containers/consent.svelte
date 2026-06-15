@@ -7,10 +7,7 @@ import LoadingOverlay from "../components/common/loading-overlay/loading-overlay
 import { ConsentStore } from "../stores/consent.store";
 $: zIndexBase = $ConsentStore.uiOptions.zIndexBase ?? 9999;
 async function handleSubmit(payload) {
-  try {
-    await dpdp.submitConsent(payload);
-  } catch {
-  }
+  await dpdp.submitConsent(payload);
 }
 function handleClose() {
   dpdp.closeConsent();

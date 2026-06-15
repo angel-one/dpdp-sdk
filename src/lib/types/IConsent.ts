@@ -116,22 +116,9 @@ export interface IConsentUiOptions {
 export interface IConsentStoreState {
 	hydrated: boolean;
 	loading: boolean;
-	submitting: boolean;
 	error: string | null;
 	data: IConsentUiResponse | null;
 	uiOptions: IConsentUiOptions;
-}
-
-export interface IConsentRecordRequest {
-	url: string;
-	method: string;
-	body: {
-		noticeId: string;
-		templateVersion: number;
-		action: ConsentButtonAction;
-		purposeIds: string[];
-		status: string;
-	};
 }
 
 export interface IConsentSubmitPayload {

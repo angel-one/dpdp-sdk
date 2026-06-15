@@ -2,7 +2,6 @@ import { writable } from 'svelte/store';
 const initialState = {
     hydrated: false,
     loading: false,
-    submitting: false,
     error: null,
     data: null,
     uiOptions: {}
@@ -22,12 +21,6 @@ export function setConsentLoading(loading) {
     ConsentStore.update((store) => ({
         ...store,
         loading
-    }));
-}
-export function setConsentSubmitting(submitting) {
-    ConsentStore.update((store) => ({
-        ...store,
-        submitting
     }));
 }
 export function setConsentError(error) {

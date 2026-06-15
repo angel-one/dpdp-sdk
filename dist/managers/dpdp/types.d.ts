@@ -2,7 +2,6 @@ import type { IConsentUiResponse } from '../../types';
 export type DpdpEnv = 'uat' | 'prod';
 export declare const DEFAULT_CONSENT_API_PATH = "/api/consent/ui";
 export declare const DEFAULT_CONSENT_TIMEOUT_MS = 10000;
-export declare const DEFAULT_RECORD_TIMEOUT_MS = 10000;
 export declare const DEFAULT_Z_INDEX_BASE = 9999;
 export interface InitConfig {
     appCode: string;
@@ -16,8 +15,6 @@ export interface InitConfig {
     allowDismiss?: boolean;
     /** Base z-index for overlay UI. Defaults to 9999. */
     zIndexBase?: number;
-    /** Timeout for consent record POST in ms. Defaults to 10000. */
-    recordTimeoutMs?: number;
 }
 export interface LoadConsentOptions {
     /** Pre-fetched consent data from +layout.server.ts */

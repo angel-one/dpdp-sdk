@@ -5,8 +5,6 @@ import type {
 	IConsentLayout,
 	IConsentLabels,
 	IConsentPurpose,
-	IConsentRecordRequest,
-	IConsentSubmitPayload,
 	IConsentUiResponse
 } from '$lib/types';
 
@@ -102,24 +100,3 @@ export function isConsentUiResponse(value: unknown): value is IConsentUiResponse
 	);
 }
 
-export function buildRecordPayload(
-	response: IConsentUiResponse,
-	payload: IConsentSubmitPayload
-): IConsentRecordRequest {
-	const { record } = response.data.actions;
-
-	return {
-		url: record.url,
-		method: record.method,
-		body: {
-			noticeId: record.noticeId,
-			templateVersion: record.templateVersion,
-			action: payload.action,
-			purposeIds: payload.selectedPurposeIds,
-			status:
-				payload.action === 'reject'
-					? record.statusNotConsented
-					: record.statusConsented
-		}
-	};
-}

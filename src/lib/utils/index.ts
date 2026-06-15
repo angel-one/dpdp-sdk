@@ -1,6 +1,5 @@
 export {
 	areAllMandatorySelected,
-	buildRecordPayload,
 	DEFAULT_BACK_LABEL,
 	DEFAULT_GOT_IT_LABEL,
 	DEFAULT_MANDATORY_ERROR_MESSAGE,

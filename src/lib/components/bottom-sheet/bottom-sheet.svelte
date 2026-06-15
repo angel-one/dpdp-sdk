@@ -59,7 +59,6 @@
 	$: detailConfirmLabel = activePurpose ? getDetailConfirmLabel(activePurpose, labels) : '';
 	$: backLabel = getBackLabel(labels);
 	$: dismissible = resolveDismissible(data.layout, $ConsentStore.uiOptions.allowDismiss);
-	$: submitting = $ConsentStore.submitting;
 
 	$: sheetState.activeDetailPurposeId, scrollSheetToTop();
 
@@ -94,8 +93,6 @@
 	}
 
 	async function handleListAction(action: ConsentButtonAction) {
-		if (submitting) return;
-
 		if (shouldBypassValidation(action)) {
 			await onSubmit?.(buildSubmitPayload(data, action, sheetState.selectedIds));
 			return;
@@ -141,13 +138,12 @@
 			<Button
 				variant="primary"
 				label={detailConfirmLabel}
-				inactive={submitting}
 				onClick={handleDetailConfirm}
 			/>
 		{:else}
 			<ConsentButtonBar
 				{actionSet}
-				inactive={!canSubmit || submitting}
+				inactive={!canSubmit}
 				onAction={handleListAction}
 			/>
 		{/if}
