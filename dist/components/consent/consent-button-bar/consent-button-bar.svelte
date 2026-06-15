@@ -1,19 +1,9 @@
-<script lang="ts">
-	import Button from '../../common/button/button.svelte';
-	import { isSecondaryInactive } from './consent-button-bar.logic';
-	import type { ConsentButtonAction, IConsentActionSet } from '../../../types';
-
-	interface ConsentButtonBarProps {
-		actionSet: IConsentActionSet;
-		inactive: boolean;
-		onAction: (action: ConsentButtonAction) => void;
-	}
-
-	let { actionSet, inactive, onAction }: ConsentButtonBarProps = $props();
-
-	const secondaryInactive = $derived(
-		isSecondaryInactive(inactive, actionSet.secondary?.action)
-	);
+<script>import Button from "../../common/button/button.svelte";
+import { isSecondaryInactive } from "./consent-button-bar.logic";
+export let actionSet;
+export let inactive = false;
+export let onAction = void 0;
+$: secondaryInactive = isSecondaryInactive(inactive, actionSet.secondary?.action);
 </script>
 
 <div class="space-y-2" role="group" aria-label="Consent actions">
@@ -21,7 +11,7 @@
 		variant="primary"
 		label={actionSet.primary.label}
 		{inactive}
-		onclick={() => onAction(actionSet.primary.action)}
+		onClick={() => onAction?.(actionSet.primary.action)}
 	/>
 
 	{#if actionSet.secondary}
@@ -29,7 +19,7 @@
 			variant="secondary"
 			label={actionSet.secondary.label}
 			inactive={secondaryInactive}
-			onclick={() => onAction(actionSet.secondary!.action)}
+			onClick={() => actionSet.secondary && onAction?.(actionSet.secondary.action)}
 		/>
 	{/if}
 </div>

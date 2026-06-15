@@ -1,6 +1,6 @@
 import type { IConsentStoreState, IConsentUiResponse } from '../types';
 export declare const ConsentStore: {
-    subscribe: (this: void, run: import("svelte/store").Subscriber<IConsentStoreState>, invalidate?: () => void) => import("svelte/store").Unsubscriber;
+    subscribe: (this: void, run: import("svelte/store").Subscriber<IConsentStoreState>, invalidate?: import("svelte/store").Invalidator<IConsentStoreState> | undefined) => import("svelte/store").Unsubscriber;
     set: (this: void, value: IConsentStoreState) => void;
     update: (this: void, updater: import("svelte/store").Updater<IConsentStoreState>) => void;
 };

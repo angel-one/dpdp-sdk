@@ -1,11 +1,23 @@
+import { SvelteComponent } from "svelte";
 import type { IConsentPurpose } from '../../../types';
-interface ConsentPurposeCardProps {
-    purpose: IConsentPurpose;
-    selected: boolean;
-    showError: boolean;
-    onToggleSelect: () => void;
-    onViewDetail: () => void;
+declare const __propDef: {
+    props: {
+        purpose: IConsentPurpose;
+        selected?: boolean;
+        showError?: boolean;
+        onToggleSelect?: (() => void) | undefined;
+        onViewDetail?: (() => void) | undefined;
+    };
+    events: {
+        [evt: string]: CustomEvent<any>;
+    };
+    slots: {};
+    exports?: {} | undefined;
+    bindings?: string | undefined;
+};
+export type ConsentPurposeCardProps = typeof __propDef.props;
+export type ConsentPurposeCardEvents = typeof __propDef.events;
+export type ConsentPurposeCardSlots = typeof __propDef.slots;
+export default class ConsentPurposeCard extends SvelteComponent<ConsentPurposeCardProps, ConsentPurposeCardEvents, ConsentPurposeCardSlots> {
 }
-declare const ConsentPurposeCard: import("svelte").Component<ConsentPurposeCardProps, {}, "">;
-type ConsentPurposeCard = ReturnType<typeof ConsentPurposeCard>;
-export default ConsentPurposeCard;
+export {};

@@ -1,30 +1,14 @@
-<script lang="ts">
-	import Badge from '../../common/badge/badge.svelte';
-	import Card from '../../common/card/card.svelte';
-	import Checkbox from '../../common/checkbox/checkbox.svelte';
-	import Chevron from '../../common/chevron/chevron.svelte';
-	import {
-		getBadgeVariant,
-		getCheckboxLabel
-	} from './consent-purpose-card.logic';
-	import { MANDATORY_ERROR_MESSAGE } from '../../../utils';
-	import type { IConsentPurpose } from '../../../types';
-
-	interface ConsentPurposeCardProps {
-		purpose: IConsentPurpose;
-		selected: boolean;
-		showError: boolean;
-		onToggleSelect: () => void;
-		onViewDetail: () => void;
-	}
-
-	let {
-		purpose,
-		selected,
-		showError,
-		onToggleSelect,
-		onViewDetail
-	}: ConsentPurposeCardProps = $props();
+<script>import Badge from "../../common/badge/badge.svelte";
+import Card from "../../common/card/card.svelte";
+import Checkbox from "../../common/checkbox/checkbox.svelte";
+import Chevron from "../../common/chevron/chevron.svelte";
+import { getBadgeVariant, getCheckboxLabel } from "./consent-purpose-card.logic";
+import { MANDATORY_ERROR_MESSAGE } from "../../../utils";
+export let purpose;
+export let selected = false;
+export let showError = false;
+export let onToggleSelect = void 0;
+export let onViewDetail = void 0;
 </script>
 
 <Card error={showError}>
@@ -33,25 +17,25 @@
 			checked={selected}
 			disabled={purpose.locked}
 			label={getCheckboxLabel(purpose)}
-			onchange={onToggleSelect}
+			onChange={onToggleSelect}
 		/>
 
 		<div class="min-w-0 flex-1">
 			<button
 				type="button"
-				class="flex w-full items-start gap-2 text-left focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
-				aria-label={`View details for ${purpose.name}`}
-				onclick={onViewDetail}
+				class="flex w-full items-start gap-2 text-left focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#3f5bd9]"
+				aria-label="View details for {purpose.name}"
+				on:click={onViewDetail}
 			>
 				<span class="flex min-w-0 flex-1 flex-wrap items-center gap-2">
-					<span class="text-sm font-medium text-text-primary">{purpose.name}</span>
+					<span class="text-sm font-medium text-gray-900">{purpose.name}</span>
 					<Badge label={purpose.badge} variant={getBadgeVariant(purpose)} />
 				</span>
 				<Chevron expanded={false} />
 			</button>
 
 			{#if purpose.bullets.length}
-				<ul class="mt-2 list-disc space-y-1 pl-4 text-sm leading-5 text-text-secondary">
+				<ul class="mt-2 list-disc space-y-1 pl-4 text-sm leading-5 text-gray-600">
 					{#each purpose.bullets as bullet (bullet)}
 						<li>{bullet}</li>
 					{/each}
@@ -61,6 +45,6 @@
 	</div>
 
 	{#if showError}
-		<p class="px-4 pb-3 text-sm text-text-error" role="alert">{MANDATORY_ERROR_MESSAGE}</p>
+		<p class="px-4 pb-3 text-sm text-red-600" role="alert">{MANDATORY_ERROR_MESSAGE}</p>
 	{/if}
 </Card>

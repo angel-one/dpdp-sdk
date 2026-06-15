@@ -2,6 +2,18 @@
 
 SvelteKit library for DPDP consent management. Ships a bottom sheet UI and loads consent configuration server-first, with an automatic client-side proxy fallback if the server fetch fails.
 
+**v0.2.0** — Svelte 4 + Tailwind 3 compatible (works with `onr-spark-mweb` stack: Svelte 4.2, Kit 2.5, Tailwind 3.3).
+
+## Compatibility
+
+| Dependency | Supported |
+|---|---|
+| Svelte | `^4.2.0` or `^5.0.0` |
+| SvelteKit | `^2.5.0` |
+| Tailwind | 3.x (uses standard utility classes + host `primary` color) |
+
+Host app must include `primary: '#3F5BD9'` (or similar) in Tailwind config and scan `node_modules/dpdp-sdk/dist/**` in `content`.
+
 
 ## How to run
 
@@ -15,7 +27,18 @@ The demo app loads consent in `+layout.server.ts` via `fetchConsentUiFromCms` (1
 
 ## Host integration
 
-1. Install `dpdp-sdk` and add SDK paths to Tailwind `content`.
+1. Install `dpdp-sdk` and add SDK to Tailwind `content`:
+
+```js
+// tailwind.config.cjs
+content: [
+  './src/**/*.{html,js,svelte,ts}',
+  './node_modules/dpdp-sdk/dist/**/*.{html,js,svelte,ts}'
+]
+```
+
+Ensure `primary` color exists in your theme (Angel apps already have `primary: '#3F5BD9'`).
+
 2. Load consent server-side in `+layout.server.ts`:
 
 ```typescript
@@ -98,7 +121,7 @@ import { fetchConsentUiFromCms } from 'dpdp-sdk/server';
 
 ## Package & publish
 
-Build the distributable (required before tagging a GitHub release — `dist/` is committed so consumers can install via `github:org/dpdp-sdk#v0.1.0`):
+Build the distributable (required before tagging a GitHub release — `dist/` is committed so consumers can install via `github:org/dpdp-sdk#v0.2.0`):
 
 ```bash
 pnpm run package
@@ -111,7 +134,7 @@ git push origin main --tags
 Install in a host SvelteKit app:
 
 ```bash
-pnpm add github:your-org/dpdp-sdk#v0.1.0
+pnpm add github:your-org/dpdp-sdk#v0.2.0
 ```
 
 `prepack` also runs `svelte-package` automatically before `npm publish` / `pnpm pack` if you publish to npm or GitHub Packages later.

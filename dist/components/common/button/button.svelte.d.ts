@@ -1,14 +1,25 @@
-import type { Snippet } from 'svelte';
-type ButtonVariant = 'primary' | 'secondary';
-interface ButtonProps {
-    variant?: ButtonVariant;
-    label: string;
-    inactive?: boolean;
-    fullWidth?: boolean;
-    ariaDescribedBy?: string;
-    onclick?: () => void;
-    children?: Snippet;
+import { SvelteComponent } from "svelte";
+declare const __propDef: {
+    props: {
+        variant?: "primary" | "secondary";
+        label?: string;
+        inactive?: boolean;
+        fullWidth?: boolean;
+        ariaDescribedBy?: string | undefined;
+        onClick?: (() => void) | undefined;
+    };
+    events: {
+        [evt: string]: CustomEvent<any>;
+    };
+    slots: {
+        default: {};
+    };
+    exports?: {} | undefined;
+    bindings?: string | undefined;
+};
+export type ButtonProps = typeof __propDef.props;
+export type ButtonEvents = typeof __propDef.events;
+export type ButtonSlots = typeof __propDef.slots;
+export default class Button extends SvelteComponent<ButtonProps, ButtonEvents, ButtonSlots> {
 }
-declare const Button: import("svelte").Component<ButtonProps, {}, "">;
-type Button = ReturnType<typeof Button>;
-export default Button;
+export {};

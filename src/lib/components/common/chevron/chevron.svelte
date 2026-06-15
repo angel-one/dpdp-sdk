@@ -1,12 +1,8 @@
 <script lang="ts">
-	interface ChevronProps {
-		expanded: boolean;
-	}
-
-	let { expanded }: ChevronProps = $props();
+	export let expanded = false;
 </script>
 
-<span class="shrink-0 text-text-secondary" aria-hidden="true">
+<span class="shrink-0 text-gray-600" aria-hidden="true">
 	{#if expanded}
 		<svg width="16" height="16" viewBox="0 0 16 16" fill="none">
 			<path

@@ -1,18 +1,11 @@
 <script lang="ts">
-	import type { Snippet } from 'svelte';
-
-	interface CardProps {
-		error?: boolean;
-		children: Snippet;
-	}
-
-	let { error = false, children }: CardProps = $props();
+	export let error = false;
 </script>
 
 <div
-	class="rounded-xl border bg-surface transition-colors {error
-		? 'border-border-error bg-red-50/30'
-		: 'border-border'}"
+	class="rounded-xl border bg-white transition-colors {error
+		? 'border-red-400 bg-red-50/30'
+		: 'border-gray-200'}"
 >
-	{@render children()}
+	<slot />
 </div>

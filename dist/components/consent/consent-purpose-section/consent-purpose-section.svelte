@@ -1,18 +1,11 @@
-<script lang="ts">
-	import ConsentIcon from '../../common/icons/consent-icon.svelte';
-	import type { IConsentPurposeSection } from '../../../types';
-
-	interface ConsentPurposeSectionProps {
-		section: IConsentPurposeSection;
-	}
-
-	let { section }: ConsentPurposeSectionProps = $props();
+<script>import ConsentIcon from "../../common/icons/consent-icon.svelte";
+export let section;
 </script>
 
 <div class="flex gap-3">
 	<ConsentIcon name={section.icon} />
 	<div class="min-w-0">
-		<p class="text-sm font-medium text-text-primary">{section.title}</p>
-		<p class="mt-1 text-sm leading-6 text-text-secondary">{section.description}</p>
+		<p class="text-sm font-medium text-gray-900">{section.title}</p>
+		<p class="mt-1 text-sm leading-6 text-gray-600">{section.description}</p>
 	</div>
 </div>

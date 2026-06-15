@@ -1,18 +1,14 @@
-<script lang="ts">
-	import { dpdp } from '..';
-	import BottomSheet from '../components/bottom-sheet/bottom-sheet.svelte';
-	import ErrorBanner from '../components/common/error-banner/error-banner.svelte';
-	import LoadingOverlay from '../components/common/loading-overlay/loading-overlay.svelte';
-	import { ConsentStore } from '../stores/consent.store';
-	import type { IConsentSubmitPayload } from '../types';
-
-	async function handleSubmit(payload: IConsentSubmitPayload) {
-		await dpdp.submitConsent(payload);
-	}
-
-	function handleClose() {
-		dpdp.closeConsent();
-	}
+<script>import { dpdp } from "..";
+import BottomSheet from "../components/bottom-sheet/bottom-sheet.svelte";
+import ErrorBanner from "../components/common/error-banner/error-banner.svelte";
+import LoadingOverlay from "../components/common/loading-overlay/loading-overlay.svelte";
+import { ConsentStore } from "../stores/consent.store";
+async function handleSubmit(payload) {
+  await dpdp.submitConsent(payload);
+}
+function handleClose() {
+  dpdp.closeConsent();
+}
 </script>
 
 {#if $ConsentStore.hydrated && $ConsentStore.data}

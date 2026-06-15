@@ -1,18 +1,16 @@
-interface $$__sveltets_2_IsomorphicComponent<Props extends Record<string, any> = any, Events extends Record<string, any> = any, Slots extends Record<string, any> = any, Exports = {}, Bindings = string> {
-    new (options: import('svelte').ComponentConstructorOptions<Props>): import('svelte').SvelteComponent<Props, Events, Slots> & {
-        $$bindings?: Bindings;
-    } & Exports;
-    (internal: unknown, props: {
-        $$events?: Events;
-        $$slots?: Slots;
-    }): Exports & {
-        $set?: any;
-        $on?: any;
+import { SvelteComponent } from "svelte";
+declare const __propDef: {
+    props: Record<string, never>;
+    events: {
+        [evt: string]: CustomEvent<any>;
     };
-    z_$$bindings?: Bindings;
+    slots: {};
+    exports?: {} | undefined;
+    bindings?: string | undefined;
+};
+export type ConsentProps = typeof __propDef.props;
+export type ConsentEvents = typeof __propDef.events;
+export type ConsentSlots = typeof __propDef.slots;
+export default class Consent extends SvelteComponent<ConsentProps, ConsentEvents, ConsentSlots> {
 }
-declare const Consent: $$__sveltets_2_IsomorphicComponent<Record<string, never>, {
-    [evt: string]: CustomEvent<any>;
-}, {}, {}, string>;
-type Consent = InstanceType<typeof Consent>;
-export default Consent;
+export {};

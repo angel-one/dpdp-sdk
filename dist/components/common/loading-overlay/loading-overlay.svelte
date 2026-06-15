@@ -1,9 +1,4 @@
-<script lang="ts">
-	interface LoadingOverlayProps {
-		message?: string;
-	}
-
-	let { message = 'Loading consent...' }: LoadingOverlayProps = $props();
+<script>export let message = "Loading consent...";
 </script>
 
 <div
@@ -12,5 +7,5 @@
 	aria-live="polite"
 	aria-busy="true"
 >
-	<p class="rounded-lg bg-surface px-4 py-2 text-sm text-text-secondary">{message}</p>
+	<p class="rounded-lg bg-white px-4 py-2 text-sm text-gray-600">{message}</p>
 </div>

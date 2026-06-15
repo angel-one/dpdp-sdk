@@ -3,23 +3,19 @@
 	import { getDetailTitle, getStaticTextEntries } from './consent-detail-view.logic';
 	import type { IConsentPurpose, IConsentStaticText } from '$lib/types';
 
-	interface ConsentDetailViewProps {
-		purpose: IConsentPurpose;
-		staticText: IConsentStaticText;
-	}
+	export let purpose: IConsentPurpose;
+	export let staticText: IConsentStaticText;
 
-	let { purpose, staticText }: ConsentDetailViewProps = $props();
-
-	const title = $derived(getDetailTitle(purpose));
-	const staticTextEntries = $derived(getStaticTextEntries(staticText));
-	const titleId = $derived(`consent-detail-title-${purpose.id}`);
+	$: title = getDetailTitle(purpose);
+	$: staticTextEntries = getStaticTextEntries(staticText);
+	$: titleId = `consent-detail-title-${purpose.id}`;
 </script>
 
 <article aria-labelledby={titleId}>
-	<h2 id={titleId} class="text-lg font-semibold text-text-primary">{title}</h2>
+	<h2 id={titleId} class="text-lg font-semibold text-gray-900">{title}</h2>
 
 	{#if purpose.description}
-		<p class="mt-2 text-sm leading-6 text-text-secondary">{purpose.description}</p>
+		<p class="mt-2 text-sm leading-6 text-gray-600">{purpose.description}</p>
 	{/if}
 
 	<div class="mt-6 space-y-5">
@@ -29,9 +25,9 @@
 	</div>
 
 	{#if staticTextEntries.length}
-		<div class="mt-6 space-y-2 border-t border-border pt-4">
+		<div class="mt-6 space-y-2 border-t border-gray-200 pt-4">
 			{#each staticTextEntries as entry (entry.key)}
-				<p class="text-xs leading-5 text-text-secondary">{entry.text}</p>
+				<p class="text-xs leading-5 text-gray-600">{entry.text}</p>
 			{/each}
 		</div>
 	{/if}

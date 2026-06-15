@@ -2,21 +2,11 @@
 	import ConsentPurposeCard from '$lib/components/consent/consent-purpose-card/consent-purpose-card.svelte';
 	import type { IConsentPurpose } from '$lib/types';
 
-	interface ConsentPurposeListProps {
-		purposes: IConsentPurpose[];
-		selectedIds: Set<string>;
-		errorPurposeIds: Set<string>;
-		onToggleSelect: (purposeId: string, locked: boolean) => void;
-		onViewDetail: (purposeId: string) => void;
-	}
-
-	let {
-		purposes,
-		selectedIds,
-		errorPurposeIds,
-		onToggleSelect,
-		onViewDetail
-	}: ConsentPurposeListProps = $props();
+	export let purposes: IConsentPurpose[] = [];
+	export let selectedIds: Set<string> = new Set();
+	export let errorPurposeIds: Set<string> = new Set();
+	export let onToggleSelect: ((purposeId: string, locked: boolean) => void) | undefined = undefined;
+	export let onViewDetail: ((purposeId: string) => void) | undefined = undefined;
 </script>
 
 <div class="mt-4 space-y-3" role="list" aria-label="Consent purposes">
@@ -26,8 +16,8 @@
 				{purpose}
 				selected={selectedIds.has(purpose.id)}
 				showError={errorPurposeIds.has(purpose.id)}
-				onToggleSelect={() => onToggleSelect(purpose.id, purpose.locked)}
-				onViewDetail={() => onViewDetail(purpose.id)}
+				onToggleSelect={() => onToggleSelect?.(purpose.id, purpose.locked)}
+				onViewDetail={() => onViewDetail?.(purpose.id)}
 			/>
 		</div>
 	{/each}

@@ -1,14 +1,9 @@
-<script lang="ts">
-	interface ConsentIconProps {
-		name: string;
-		class?: string;
-	}
-
-	let { name, class: className = '' }: ConsentIconProps = $props();
+<script>export let name = "";
+export let iconClass = "";
 </script>
 
 <svg
-	class="h-5 w-5 shrink-0 text-primary {className}"
+	class="h-5 w-5 shrink-0 text-primary {iconClass}"
 	viewBox="0 0 20 20"
 	fill="none"
 	aria-hidden="true"

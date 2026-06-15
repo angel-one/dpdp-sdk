@@ -1,11 +1,23 @@
+import { SvelteComponent } from "svelte";
 import type { IConsentPurpose } from '../../../types';
-interface ConsentPurposeListProps {
-    purposes: IConsentPurpose[];
-    selectedIds: Set<string>;
-    errorPurposeIds: Set<string>;
-    onToggleSelect: (purposeId: string, locked: boolean) => void;
-    onViewDetail: (purposeId: string) => void;
+declare const __propDef: {
+    props: {
+        purposes?: IConsentPurpose[];
+        selectedIds?: Set<string>;
+        errorPurposeIds?: Set<string>;
+        onToggleSelect?: ((purposeId: string, locked: boolean) => void) | undefined;
+        onViewDetail?: ((purposeId: string) => void) | undefined;
+    };
+    events: {
+        [evt: string]: CustomEvent<any>;
+    };
+    slots: {};
+    exports?: {} | undefined;
+    bindings?: string | undefined;
+};
+export type ConsentPurposeListProps = typeof __propDef.props;
+export type ConsentPurposeListEvents = typeof __propDef.events;
+export type ConsentPurposeListSlots = typeof __propDef.slots;
+export default class ConsentPurposeList extends SvelteComponent<ConsentPurposeListProps, ConsentPurposeListEvents, ConsentPurposeListSlots> {
 }
-declare const ConsentPurposeList: import("svelte").Component<ConsentPurposeListProps, {}, "">;
-type ConsentPurposeList = ReturnType<typeof ConsentPurposeList>;
-export default ConsentPurposeList;
+export {};

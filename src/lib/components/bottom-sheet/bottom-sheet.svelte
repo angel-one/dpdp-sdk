@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { untrack } from 'svelte';
 	import BottomSheetShell from '$lib/components/common/bottom-sheet-shell/bottom-sheet-shell.svelte';
 	import Button from '$lib/components/common/button/button.svelte';
 	import ConsentButtonBar from '$lib/components/consent/consent-button-bar/consent-button-bar.svelte';
@@ -24,41 +23,27 @@
 		type BottomSheetState
 	} from './bottom-sheet.logic';
 
-	interface BottomSheetProps {
-		data: IConsentUiResponse;
-		onSubmit?: (payload: IConsentSubmitPayload) => void;
-		onClose?: () => void;
-	}
+	export let data: IConsentUiResponse;
+	export let onSubmit: ((payload: IConsentSubmitPayload) => void) | undefined = undefined;
+	export let onClose: (() => void) | undefined = undefined;
 
-	let { data, onSubmit, onClose }: BottomSheetProps = $props();
-
-	const notice = $derived(data.data.notice);
-	const purposes = $derived(getVisiblePurposes(data.data.purposes));
-	const actionSet = $derived(getButtonActionSet(data.data));
 	const listTitleId = 'consent-list-title';
 
-	let sheetState = $state<BottomSheetState>(
-		untrack(() => createInitialState(data.data.purposes))
-	);
+	let sheetState: BottomSheetState = createInitialState(data.data.purposes);
 
-	const viewMode = $derived(getViewMode(sheetState.activeDetailPurposeId));
-	const activePurpose = $derived(
-		getActivePurpose(data.data.purposes, sheetState.activeDetailPurposeId)
+	$: notice = data.data.notice;
+	$: purposes = getVisiblePurposes(data.data.purposes);
+	$: actionSet = getButtonActionSet(data.data);
+	$: viewMode = getViewMode(sheetState.activeDetailPurposeId);
+	$: activePurpose = getActivePurpose(data.data.purposes, sheetState.activeDetailPurposeId);
+	$: detailTitleId = activePurpose ? `consent-detail-title-${activePurpose.id}` : listTitleId;
+	$: canSubmit = canSubmitConsent(data.data.purposes, sheetState.selectedIds);
+	$: errorPurposeIds = getErrorPurposeIdSet(
+		data.data.purposes,
+		sheetState.selectedIds,
+		sheetState.validationAttempted
 	);
-	const detailTitleId = $derived(
-		activePurpose ? `consent-detail-title-${activePurpose.id}` : listTitleId
-	);
-	const canSubmit = $derived(canSubmitConsent(data.data.purposes, sheetState.selectedIds));
-	const errorPurposeIds = $derived(
-		getErrorPurposeIdSet(
-			data.data.purposes,
-			sheetState.selectedIds,
-			sheetState.validationAttempted
-		)
-	);
-	const detailConfirmLabel = $derived(
-		activePurpose ? getDetailConfirmLabel(activePurpose) : ''
-	);
+	$: detailConfirmLabel = activePurpose ? getDetailConfirmLabel(activePurpose) : '';
 
 	function handleToggleSelect(purposeId: string, locked: boolean) {
 		sheetState = toggleSelected(sheetState, purposeId, locked);
@@ -98,27 +83,25 @@
 	onBack={viewMode === 'detail' ? handleBackFromDetail : undefined}
 	backLabel="Back to consent list"
 >
-	{#snippet children()}
-		{#if viewMode === 'detail' && activePurpose}
-			<ConsentDetailView purpose={activePurpose} staticText={data.data.staticText} />
-		{:else}
-			<ConsentListView
-				{notice}
-				{purposes}
-				selectedIds={sheetState.selectedIds}
-				{errorPurposeIds}
-				titleId={listTitleId}
-				onToggleSelect={handleToggleSelect}
-				onViewDetail={handleViewDetail}
-			/>
-		{/if}
-	{/snippet}
+	{#if viewMode === 'detail' && activePurpose}
+		<ConsentDetailView purpose={activePurpose} staticText={data.data.staticText} />
+	{:else}
+		<ConsentListView
+			{notice}
+			{purposes}
+			selectedIds={sheetState.selectedIds}
+			{errorPurposeIds}
+			titleId={listTitleId}
+			onToggleSelect={handleToggleSelect}
+			onViewDetail={handleViewDetail}
+		/>
+	{/if}
 
-	{#snippet footer()}
+	<svelte:fragment slot="footer">
 		{#if viewMode === 'detail' && activePurpose}
-			<Button variant="primary" label={detailConfirmLabel} onclick={handleDetailConfirm} />
+			<Button variant="primary" label={detailConfirmLabel} onClick={handleDetailConfirm} />
 		{:else}
 			<ConsentButtonBar {actionSet} inactive={!canSubmit} onAction={handleListAction} />
 		{/if}
-	{/snippet}
+	</svelte:fragment>
 </BottomSheetShell>

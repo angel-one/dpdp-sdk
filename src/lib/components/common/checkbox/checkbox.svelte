@@ -1,19 +1,15 @@
 <script lang="ts">
-	interface CheckboxProps {
-		checked: boolean;
-		disabled?: boolean;
-		label: string;
-		onchange?: () => void;
-	}
-
-	let { checked, disabled = false, label, onchange }: CheckboxProps = $props();
+	export let checked = false;
+	export let disabled = false;
+	export let label = '';
+	export let onChange: (() => void) | undefined = undefined;
 </script>
 
 <input
 	type="checkbox"
 	{checked}
 	{disabled}
-	{onchange}
+	on:change={onChange}
 	aria-label={label}
-	class="mt-1 h-4 w-4 shrink-0 rounded border-border text-primary focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:cursor-not-allowed disabled:opacity-60"
+	class="mt-1 h-4 w-4 shrink-0 rounded border-gray-200 text-primary focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#3f5bd9] disabled:cursor-not-allowed disabled:opacity-60"
 />
