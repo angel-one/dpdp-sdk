@@ -1,6 +1,6 @@
 {
 	"name": "dpdp-sdk",
-	"version": "0.3.0",
+	"version": "0.4.0",
 	"type": "module",
 	"engines": {
 		"node": ">=18.0.0"
@@ -26,6 +26,7 @@
 		"./styles": "./dist/styles/dpdp.css"
 	},
 	"files": ["src", "dist"],
+	"sideEffects": ["**/*.css"],
 	"peerDependencies": {
 		"@sveltejs/kit": "^2.5.0",
 		"svelte": "^4.2.0 || ^5.0.0"

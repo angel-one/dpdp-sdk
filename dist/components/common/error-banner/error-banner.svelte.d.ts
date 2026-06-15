@@ -2,6 +2,7 @@ import { SvelteComponent } from "svelte";
 declare const __propDef: {
     props: {
         message?: string;
+        onDismiss?: (() => void) | undefined;
     };
     events: {
         [evt: string]: CustomEvent<any>;

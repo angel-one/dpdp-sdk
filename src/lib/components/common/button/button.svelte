@@ -7,6 +7,11 @@
 	export let fullWidth = true;
 	export let ariaDescribedBy: string | undefined = undefined;
 	export let onClick: (() => void) | undefined = undefined;
+
+	function handleClick() {
+		if (inactive) return;
+		onClick?.();
+	}
 </script>
 
 <button
@@ -14,9 +19,9 @@
 	class="dpdp-btn dpdp-btn--{variant}"
 	class:dpdp-btn--inactive={inactive}
 	class:dpdp-btn--full-width={fullWidth}
-	aria-disabled={inactive}
+	disabled={inactive}
 	aria-describedby={ariaDescribedBy}
-	on:click={onClick}
+	on:click={handleClick}
 >
 	<slot>{label}</slot>
 </button>

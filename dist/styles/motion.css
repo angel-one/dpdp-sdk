@@ -1,0 +1,7 @@
+@media (prefers-reduced-motion: reduce) {
+	.dpdp-root .dpdp-btn,
+	.dpdp-root .dpdp-card,
+	.dpdp-root .dpdp-icon-btn {
+		transition: none;
+	}
+}

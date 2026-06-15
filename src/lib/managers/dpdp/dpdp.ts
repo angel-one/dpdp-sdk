@@ -1,19 +1,29 @@
 import type { DpdpEnv, InitConfig, LoadConsentOptions } from './types';
 import {
 	DEFAULT_CONSENT_API_PATH,
-	DEFAULT_CONSENT_TIMEOUT_MS
+	DEFAULT_CONSENT_TIMEOUT_MS,
+	DEFAULT_RECORD_TIMEOUT_MS,
+	DEFAULT_Z_INDEX_BASE
 } from './types';
 import {
 	resetConsentStore,
 	setConsentData as updateConsentData,
 	setConsentError as updateConsentError,
 	setConsentLoading,
+	setConsentSubmitting,
+	setConsentUiOptions,
 	updateConsentHydration
 } from '$lib/stores/consent.store';
-import { buildRecordPayload } from '$lib/utils';
+import { buildRecordPayload, isConsentUiResponse } from '$lib/utils';
 import { get } from 'svelte/store';
 import { ConsentStore } from '$lib/stores/consent.store';
 import type { IConsentSubmitPayload, IConsentUiResponse } from '$lib/types';
+
+function assertNonEmpty(value: string | undefined, field: string) {
+	if (!value?.trim()) {
+		throw new Error(`${field} cannot be empty`);
+	}
+}
 
 class Dpdp {
 	#isInitialized = false;
@@ -26,6 +36,7 @@ class Dpdp {
 	#languageCode: string | null = null;
 	#env: DpdpEnv | null = null;
 	#consentApiPath = DEFAULT_CONSENT_API_PATH;
+	#recordTimeoutMs = DEFAULT_RECORD_TIMEOUT_MS;
 
 	constructor() {
 		this.#initInvocationPromise = new Promise((resolve) => {
@@ -35,25 +46,31 @@ class Dpdp {
 
 	async init(config: InitConfig) {
 		if (this.#isInitialized) {
-			throw new Error('DPDP SDK is already initialized');
+			throw new Error('DPDP SDK is already initialized. Call destroy() before re-initializing.');
 		}
 
-		if (!config.appCode?.length) throw new Error('appCode cannot be empty');
-		if (!config.journeyCode?.length) throw new Error('journeyCode cannot be empty');
-		if (!config.pageCode?.length) throw new Error('pageCode cannot be empty');
-		if (!config.languageCode?.length) throw new Error('languageCode cannot be empty');
+		assertNonEmpty(config.appCode, 'appCode');
+		assertNonEmpty(config.journeyCode, 'journeyCode');
+		assertNonEmpty(config.pageCode, 'pageCode');
+		assertNonEmpty(config.languageCode, 'languageCode');
 
 		const env = config.env ?? 'uat';
 		if (env !== 'uat' && env !== 'prod') {
 			throw new Error(`Invalid env "${env}". Expected "uat" or "prod"`);
 		}
 
-		this.#appCode = config.appCode;
-		this.#journeyCode = config.journeyCode;
-		this.#pageCode = config.pageCode;
-		this.#languageCode = config.languageCode;
+		this.#appCode = config.appCode.trim();
+		this.#journeyCode = config.journeyCode.trim();
+		this.#pageCode = config.pageCode.trim();
+		this.#languageCode = config.languageCode.trim();
 		this.#env = env;
 		this.#consentApiPath = config.consentApiPath ?? DEFAULT_CONSENT_API_PATH;
+		this.#recordTimeoutMs = config.recordTimeoutMs ?? DEFAULT_RECORD_TIMEOUT_MS;
+
+		setConsentUiOptions({
+			allowDismiss: config.allowDismiss,
+			zIndexBase: config.zIndexBase ?? DEFAULT_Z_INDEX_BASE
+		});
 
 		this.#isInitialized = true;
 		if (this.#invocationResolver) this.#invocationResolver();
@@ -118,10 +135,19 @@ class Dpdp {
 			}
 
 			if (!response.ok) {
-				throw new Error(`Failed to fetch consent UI: ${response.status}`);
+				const errorBody = await response.text().catch(() => '');
+				throw new Error(
+					errorBody
+						? `Failed to fetch consent UI: ${response.status} — ${errorBody}`
+						: `Failed to fetch consent UI: ${response.status}`
+				);
 			}
 
-			const data = (await response.json()) as IConsentUiResponse;
+			const data: unknown = await response.json();
+			if (!isConsentUiResponse(data)) {
+				throw new Error('Invalid consent UI response from server');
+			}
+
 			updateConsentData(data);
 			updateConsentHydration(true);
 			return data;
@@ -138,6 +164,10 @@ class Dpdp {
 	async setConsentData(data: IConsentUiResponse) {
 		await this.getIsSdkInitialized();
 
+		if (!isConsentUiResponse(data)) {
+			throw new Error('Invalid consent UI response');
+		}
+
 		updateConsentError(null);
 		setConsentLoading(false);
 		updateConsentData(data);
@@ -152,10 +182,7 @@ class Dpdp {
 		updateConsentHydration(false);
 	}
 
-	/**
-	 * Handles a consent action from the UI. Builds the record payload from CMS config;
-	 * POST to record.url will be wired when the record endpoint is integrated.
-	 */
+	/** Submits consent to the CMS record endpoint, then closes the sheet on success. */
 	async submitConsent(payload: IConsentSubmitPayload) {
 		await this.getIsSdkInitialized();
 
@@ -164,8 +191,44 @@ class Dpdp {
 			throw new Error('Cannot submit consent: no consent data loaded');
 		}
 
-		buildRecordPayload(state.data, payload);
-		this.closeConsent();
+		const recordRequest = buildRecordPayload(state.data, payload);
+
+		setConsentSubmitting(true);
+		updateConsentError(null);
+
+		try {
+			let response: Response;
+			try {
+				response = await fetch(recordRequest.url, {
+					method: recordRequest.method,
+					headers: { 'Content-Type': 'application/json' },
+					body: JSON.stringify(recordRequest.body),
+					signal: AbortSignal.timeout(this.#recordTimeoutMs)
+				});
+			} catch (error) {
+				if (error instanceof DOMException && error.name === 'TimeoutError') {
+					throw new Error(`Consent record request timed out after ${this.#recordTimeoutMs}ms`);
+				}
+				throw error;
+			}
+
+			if (!response.ok) {
+				const errorBody = await response.text().catch(() => '');
+				throw new Error(
+					errorBody
+						? `Failed to record consent: ${response.status} — ${errorBody}`
+						: `Failed to record consent: ${response.status}`
+				);
+			}
+
+			this.closeConsent();
+		} catch (error) {
+			const message = error instanceof Error ? error.message : 'Failed to submit consent';
+			updateConsentError(message);
+			throw error;
+		} finally {
+			setConsentSubmitting(false);
+		}
 	}
 
 	closeConsent() {
@@ -173,6 +236,10 @@ class Dpdp {
 	}
 
 	destroy() {
+		if (this.#invocationResolver) {
+			this.#invocationResolver();
+		}
+
 		this.#isInitialized = false;
 		this.#appCode = null;
 		this.#journeyCode = null;
@@ -180,6 +247,7 @@ class Dpdp {
 		this.#languageCode = null;
 		this.#env = null;
 		this.#consentApiPath = DEFAULT_CONSENT_API_PATH;
+		this.#recordTimeoutMs = DEFAULT_RECORD_TIMEOUT_MS;
 		this.#initInvocationPromise = new Promise((resolve) => {
 			this.#invocationResolver = resolve;
 		});

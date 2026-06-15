@@ -25,6 +25,7 @@ export let onViewDetail = void 0;
 				type="button"
 				class="dpdp-purpose-card__detail-btn"
 				aria-label="View details for {purpose.name}"
+				aria-haspopup="dialog"
 				on:click={onViewDetail}
 			>
 				<span class="dpdp-purpose-card__title-row">
@@ -45,6 +46,8 @@ export let onViewDetail = void 0;
 	</div>
 
 	{#if showError}
-		<p class="dpdp-purpose-card__error" role="alert">{MANDATORY_ERROR_MESSAGE}</p>
+		<p class="dpdp-purpose-card__error" role="alert" data-dpdp-validation-error tabindex="-1">
+			{MANDATORY_ERROR_MESSAGE}
+		</p>
 	{/if}
 </Card>

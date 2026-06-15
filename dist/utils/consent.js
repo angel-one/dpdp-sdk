@@ -1,4 +1,9 @@
 export const MANDATORY_ERROR_MESSAGE = 'This is a mandatory consent. Tick to continue.';
+export function resolveDismissible(layout, allowDismiss) {
+    if (allowDismiss !== undefined)
+        return allowDismiss;
+    return layout.dismissible === true;
+}
 export function getVisiblePurposes(purposes) {
     return purposes.filter((purpose) => purpose.visible);
 }

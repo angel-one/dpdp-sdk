@@ -1,0 +1,23 @@
+.dpdp-root .dpdp-card {
+	border-radius: 0.75rem;
+	border-radius: var(--dpdp-radius-lg);
+	border: 1px solid #e5e7eb;
+	border: 1px solid var(--dpdp-color-border);
+	background-color: #ffffff;
+	background-color: var(--dpdp-color-white);
+	transition: border-color 0.15s ease, background-color 0.15s ease;
+}
+
+.dpdp-root .dpdp-card--error {
+	border-color: #f87171;
+	border-color: var(--dpdp-color-danger-border);
+	background-color: #fef2f2;
+	background-color: color-mix(in srgb, var(--dpdp-color-danger-bg) 30%, transparent);
+}
+
+@supports not (background-color: color-mix(in srgb, white 50%, transparent)) {
+	.dpdp-root .dpdp-card--error {
+		background-color: #fef2f2;
+		background-color: var(--dpdp-color-danger-bg);
+	}
+}

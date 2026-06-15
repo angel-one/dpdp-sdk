@@ -3,7 +3,7 @@ import type { IConsentSubmitPayload, IConsentUiResponse } from '../../types';
 declare const __propDef: {
     props: {
         data: IConsentUiResponse;
-        onSubmit?: ((payload: IConsentSubmitPayload) => void) | undefined;
+        onSubmit?: ((payload: IConsentSubmitPayload) => void | Promise<void>) | undefined;
         onClose?: (() => void) | undefined;
     };
     events: {

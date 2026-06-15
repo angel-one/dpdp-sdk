@@ -4,7 +4,9 @@ import ConsentButtonBar from "../consent/consent-button-bar/consent-button-bar.s
 import ConsentDetailView from "../consent/consent-detail-view/consent-detail-view.svelte";
 import { getDetailConfirmLabel } from "../consent/consent-detail-view/consent-detail-view.logic";
 import ConsentListView from "../consent/consent-list-view/consent-list-view.svelte";
-import { getButtonActionSet, getVisiblePurposes } from "../../utils";
+import { ConsentStore } from "../../stores/consent.store";
+import { getButtonActionSet, getVisiblePurposes, resolveDismissible } from "../../utils";
+import { tick } from "svelte";
 import {
   buildSubmitPayload,
   canSubmitConsent,
@@ -23,7 +25,9 @@ export let data;
 export let onSubmit = void 0;
 export let onClose = void 0;
 const listTitleId = "consent-list-title";
+const listSubtitleId = "consent-list-subtitle";
 let sheetState = createInitialState(data.data.purposes);
+let sheetShell = void 0;
 $: notice = data.data.notice;
 $: purposes = getVisiblePurposes(data.data.purposes);
 $: actionSet = getButtonActionSet(data.data);
@@ -37,6 +41,9 @@ $: errorPurposeIds = getErrorPurposeIdSet(
   sheetState.validationAttempted
 );
 $: detailConfirmLabel = activePurpose ? getDetailConfirmLabel(activePurpose) : "";
+$: dismissible = resolveDismissible(data.layout, $ConsentStore.uiOptions.allowDismiss);
+$: submitting = $ConsentStore.submitting;
+$: sheetState.activeDetailPurposeId, scrollSheetToTop();
 function handleToggleSelect(purposeId, locked) {
   sheetState = toggleSelected(sheetState, purposeId, locked);
 }
@@ -50,21 +57,37 @@ function handleDetailConfirm() {
   if (!activePurpose) return;
   sheetState = confirmDetailView(sheetState, activePurpose);
 }
-function handleListAction(action) {
+async function scrollSheetToTop() {
+  await tick();
+  sheetShell?.getSheetBodyElement()?.scrollTo({ top: 0, behavior: "auto" });
+}
+async function focusFirstValidationError() {
+  await tick();
+  const body = sheetShell?.getSheetBodyElement();
+  const firstError = body?.querySelector("[data-dpdp-validation-error]");
+  firstError?.scrollIntoView({ behavior: "smooth", block: "nearest" });
+  firstError?.focus();
+}
+async function handleListAction(action) {
+  if (submitting) return;
   if (shouldBypassValidation(action)) {
-    onSubmit?.(buildSubmitPayload(data, action, sheetState.selectedIds));
+    await onSubmit?.(buildSubmitPayload(data, action, sheetState.selectedIds));
     return;
   }
   if (!canSubmit) {
     sheetState = markValidationAttempted(sheetState);
+    await focusFirstValidationError();
     return;
   }
-  onSubmit?.(buildSubmitPayload(data, action, sheetState.selectedIds));
+  await onSubmit?.(buildSubmitPayload(data, action, sheetState.selectedIds));
 }
 </script>
 
 <BottomSheetShell
+	bind:this={sheetShell}
 	titleId={detailTitleId}
+	subtitleId={viewMode === 'list' ? listSubtitleId : undefined}
+	{dismissible}
 	onClose={viewMode === 'list' ? onClose : undefined}
 	onBack={viewMode === 'detail' ? handleBackFromDetail : undefined}
 	backLabel="Back to consent list"
@@ -78,6 +101,7 @@ function handleListAction(action) {
 			selectedIds={sheetState.selectedIds}
 			{errorPurposeIds}
 			titleId={listTitleId}
+			subtitleId={listSubtitleId}
 			onToggleSelect={handleToggleSelect}
 			onViewDetail={handleViewDetail}
 		/>
@@ -85,9 +109,18 @@ function handleListAction(action) {
 
 	<svelte:fragment slot="footer">
 		{#if viewMode === 'detail' && activePurpose}
-			<Button variant="primary" label={detailConfirmLabel} onClick={handleDetailConfirm} />
+			<Button
+				variant="primary"
+				label={detailConfirmLabel}
+				inactive={submitting}
+				onClick={handleDetailConfirm}
+			/>
 		{:else}
-			<ConsentButtonBar {actionSet} inactive={!canSubmit} onAction={handleListAction} />
+			<ConsentButtonBar
+				{actionSet}
+				inactive={!canSubmit || submitting}
+				onAction={handleListAction}
+			/>
 		{/if}
 	</svelte:fragment>
 </BottomSheetShell>

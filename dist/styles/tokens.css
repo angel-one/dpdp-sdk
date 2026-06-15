@@ -1,0 +1,34 @@
+/* Theme tokens — override on .dpdp-root in host apps */
+.dpdp-root {
+	--dpdp-color-primary: #3f5bd9;
+	--dpdp-color-white: #ffffff;
+	--dpdp-color-text: #111827;
+	--dpdp-color-text-muted: #4b5563;
+	--dpdp-color-text-disabled: #9ca3af;
+	--dpdp-color-border: #e5e7eb;
+	--dpdp-color-bg-subtle: #f3f4f6;
+	--dpdp-color-bg-primary-subtle: #eff6ff;
+	--dpdp-color-danger: #dc2626;
+	--dpdp-color-danger-border: #f87171;
+	--dpdp-color-danger-bg: #fef2f2;
+	--dpdp-color-overlay: rgba(0, 0, 0, 0.4);
+	--dpdp-color-overlay-light: rgba(0, 0, 0, 0.2);
+	--dpdp-color-hover: #f9fafb;
+	--dpdp-color-inactive-bg: #e5e7eb;
+	--dpdp-shadow-sheet: 0 -2px 4px rgba(138, 141, 153, 0.16);
+	--dpdp-font-family: inherit;
+	--dpdp-radius-md: 0.5rem;
+	--dpdp-radius-lg: 0.75rem;
+	--dpdp-radius-xl: 1rem;
+	--dpdp-radius-full: 9999px;
+	--dpdp-z-overlay: 9999;
+	--dpdp-z-banner: 10000;
+	--dpdp-z-sheet: 10001;
+	--dpdp-focus-ring: 0 0 0 2px var(--dpdp-color-white), 0 0 0 4px var(--dpdp-color-primary);
+	--dpdp-sheet-max-width: 32rem;
+
+	font-family: var(--dpdp-font-family);
+	color: #111827;
+	color: var(--dpdp-color-text);
+	box-sizing: border-box;
+}

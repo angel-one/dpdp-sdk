@@ -1,0 +1,22 @@
+.dpdp-root .dpdp-badge {
+	display: inline-block;
+	border-radius: 0.25rem;
+	padding: 0.125rem 0.5rem;
+	font-size: 0.75rem;
+	font-weight: 500;
+	line-height: 1rem;
+}
+
+.dpdp-root .dpdp-badge--mandatory {
+	background-color: #eff6ff;
+	background-color: var(--dpdp-color-bg-primary-subtle);
+	color: #3f5bd9;
+	color: var(--dpdp-color-primary);
+}
+
+.dpdp-root .dpdp-badge--optional {
+	background-color: #f3f4f6;
+	background-color: var(--dpdp-color-bg-subtle);
+	color: #4b5563;
+	color: var(--dpdp-color-text-muted);
+}

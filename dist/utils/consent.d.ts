@@ -1,5 +1,6 @@
-import type { ConsentButtonAction, IConsentActionSet, IConsentData, IConsentPurpose, IConsentSubmitPayload, IConsentUiResponse } from '../types';
+import type { ConsentButtonAction, IConsentActionSet, IConsentData, IConsentLayout, IConsentPurpose, IConsentRecordRequest, IConsentSubmitPayload, IConsentUiResponse } from '../types';
 export declare const MANDATORY_ERROR_MESSAGE = "This is a mandatory consent. Tick to continue.";
+export declare function resolveDismissible(layout: IConsentLayout, allowDismiss?: boolean): boolean;
 export declare function getVisiblePurposes(purposes: IConsentPurpose[]): IConsentPurpose[];
 export declare function getInitialSelectedIds(purposes: IConsentPurpose[]): Set<string>;
 export declare function getInitialExpandedIds(purposes: IConsentPurpose[]): Set<string>;
@@ -8,14 +9,4 @@ export declare function areAllMandatorySelected(purposes: IConsentPurpose[], sel
 export declare function getUncheckedMandatoryIds(purposes: IConsentPurpose[], selectedIds: Set<string>): string[];
 export declare function resolveSelectedIdsForAction(action: ConsentButtonAction, purposes: IConsentPurpose[], selectedIds: Set<string>): string[];
 export declare function isConsentUiResponse(value: unknown): value is IConsentUiResponse;
-export declare function buildRecordPayload(response: IConsentUiResponse, payload: IConsentSubmitPayload): {
-    url: string;
-    method: string;
-    body: {
-        noticeId: string;
-        templateVersion: number;
-        action: ConsentButtonAction;
-        purposeIds: string[];
-        status: string;
-    };
-};
+export declare function buildRecordPayload(response: IConsentUiResponse, payload: IConsentSubmitPayload): IConsentRecordRequest;

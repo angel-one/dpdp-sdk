@@ -1,8 +1,8 @@
 # DPDP SDK
 
-SvelteKit library for DPDP consent management. Ships a bottom sheet UI and loads consent configuration server-first, with an automatic client-side proxy fallback if the server fetch fails.
+SvelteKit library for DPDP consent management. Ships a self-contained bottom sheet UI with server-first data loading and automatic client-side proxy fallback.
 
-**v0.3.0** — Self-contained vanilla CSS (no Tailwind dependency). Works in any SvelteKit host regardless of Tailwind version or config.
+**v0.4.0** — Production-hardened: vanilla CSS, portal rendering, scroll lock, consent record POST, blocking dismiss by default.
 
 ## Compatibility
 
@@ -12,8 +12,20 @@ SvelteKit library for DPDP consent management. Ships a bottom sheet UI and loads
 | SvelteKit | `^2.5.0` |
 | CSS | Built-in — no Tailwind setup required |
 
-Styles ship with the SDK and are scoped under `.dpdp-root`. Host apps do **not** need to add SDK paths to Tailwind `content`.
+Styles ship scoped under `.dpdp-root`. Host apps do **not** need Tailwind `content` paths for the SDK.
 
+## Production features
+
+- Self-contained CSS with theme tokens (no host Tailwind dependency)
+- Portal to `document.body` (escapes host stacking contexts)
+- Body scroll lock while sheet is open
+- Focus trap with focus restore on close
+- Blocking consent by default (`layout.dismissible` or `allowDismiss` to enable close)
+- Consent record POST to CMS `record.url`
+- Submit / load loading states with spinner
+- Dismissible error banner
+- Safe-area insets, reduced-motion support, 44px touch targets
+- Configurable z-index base (default `9999`)
 
 ## How to run
 
@@ -23,14 +35,12 @@ pnpm install
 pnpm dev
 ```
 
-The demo app loads consent in `+layout.server.ts` via `fetchConsentUiFromCms` (10s timeout). If that fails, `dpdp.loadConsent()` retries via `/api/consent/ui` on the client.
-
 ## Host integration
 
-1. Install `dpdp-sdk`:
+1. Install:
 
 ```bash
-pnpm add github:your-org/dpdp-sdk#v0.3.0
+pnpm add github:your-org/dpdp-sdk#v0.4.0
 ```
 
 2. Load consent server-side in `+layout.server.ts`:
@@ -62,97 +72,91 @@ export const load: LayoutServerLoad = async ({ request }) => {
 };
 ```
 
-3. Hydrate the SDK in root layout (client):
+3. Hydrate in root layout:
 
-```javascript
-import { dpdp, Consent } from 'dpdp-sdk';
-import { onDestroy, onMount } from 'svelte';
+```svelte
+<script>
+  import { dpdp, Consent } from 'dpdp-sdk';
+  import { onDestroy, onMount } from 'svelte';
 
-export let data;
+  export let data;
 
-onMount(async () => {
-  await dpdp.init({
-    appCode: 'insurance_app',
-    journeyCode: 'kyc_onboarding',
-    pageCode: 'insurance_kyc_gate',
-    languageCode: 'en',
-    env: 'uat'
+  onMount(async () => {
+    await dpdp.init({
+      appCode: 'insurance_app',
+      journeyCode: 'kyc_onboarding',
+      pageCode: 'insurance_kyc_gate',
+      languageCode: 'en',
+      env: 'uat',
+      // Optional: override z-index if host nav uses 10000+
+      zIndexBase: 9999
+    });
+
+    await dpdp.loadConsent({
+      data: data.consentUi,
+      error: data.consentError
+    });
   });
 
-  await dpdp.loadConsent({
-    data: data.consentUi,
-    error: data.consentError
+  onDestroy(() => {
+    dpdp.destroy();
   });
-});
+</script>
 
-onDestroy(() => {
-  dpdp.destroy();
-});
-```
-
-```html
 <Consent />
 ```
 
-`<Consent />` auto-imports SDK styles. No extra CSS setup needed.
+4. Copy `src/routes/api/consent/ui/+server.ts` for client fallback.
 
-4. Copy `src/routes/api/consent/ui/+server.ts` — required for the client fallback. Auth cookies/headers are forwarded to CMS automatically.
-
-### Theming (optional)
-
-Override CSS variables on `.dpdp-root` in your host app:
+### Theming
 
 ```css
 .dpdp-root {
   --dpdp-color-primary: #3f5bd9;
   --dpdp-font-family: 'Roboto', sans-serif;
+  --dpdp-z-overlay: 9999;
 }
 ```
 
-Or import the stylesheet directly for advanced setups:
+### Dismiss behaviour
 
-```javascript
-import 'dpdp-sdk/styles';
-```
+By default the sheet is **blocking** — no close button, Escape does nothing. To allow dismiss:
+
+- CMS: `layout.dismissible: true` in the consent UI response, or
+- SDK: `allowDismiss: true` in `dpdp.init()`
 
 ## Public API
 
 ```javascript
 import { dpdp, Consent } from 'dpdp-sdk';
 
-await dpdp.init({ appCode, journeyCode, pageCode, languageCode, env, consentApiPath });
-await dpdp.loadConsent({ data, error }); // server-first, client fallback
-await dpdp.setConsentData(data);         // manual hydration (advanced)
-await dpdp.fetchConsentUi();             // client fallback only (advanced)
+await dpdp.init({ appCode, journeyCode, pageCode, languageCode, env, consentApiPath, allowDismiss, zIndexBase, recordTimeoutMs });
+await dpdp.loadConsent({ data, error });
+await dpdp.setConsentData(data);
+await dpdp.setConsentError(null);
+await dpdp.fetchConsentUi();
+await dpdp.submitConsent(payload);  // POSTs to CMS record.url
 dpdp.closeConsent();
 dpdp.destroy();
 ```
 
 ```javascript
 import { fetchConsentUiFromCms } from 'dpdp-sdk/server';
+import 'dpdp-sdk/styles'; // optional — <Consent /> auto-imports
 ```
 
 ## Package & publish
-
-Build the distributable (required before tagging a GitHub release — `dist/` is committed so consumers can install via `github:org/dpdp-sdk#v0.3.0`):
 
 ```bash
 pnpm run package
 git add dist
 git commit -m "chore: build dist for release"
-git tag v0.3.0
+git tag v0.4.0
 git push origin main --tags
 ```
 
-Install in a host SvelteKit app:
+## Migrating from v0.3.0
 
-```bash
-pnpm add github:your-org/dpdp-sdk#v0.3.0
-```
-
-`prepack` also runs `svelte-package` automatically before `npm publish` / `pnpm pack` if you publish to npm or GitHub Packages later.
-
-## Migrating from v0.2.0
-
-- Remove `node_modules/dpdp-sdk/dist/**` from Tailwind `content` — no longer needed.
-- Bump to `v0.3.0` and reinstall. UI styling is now self-contained.
+- Remove SDK from Tailwind `content` if added in v0.2.x
+- Bump to `v0.4.0` — close button hidden by default (blocking consent)
+- Set `allowDismiss: true` if you previously relied on implicit dismiss via X button

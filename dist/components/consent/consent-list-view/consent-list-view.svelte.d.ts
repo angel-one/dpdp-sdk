@@ -7,6 +7,7 @@ declare const __propDef: {
         selectedIds?: Set<string>;
         errorPurposeIds?: Set<string>;
         titleId?: string;
+        subtitleId?: string;
         onToggleSelect?: ((purposeId: string, locked: boolean) => void) | undefined;
         onViewDetail?: ((purposeId: string) => void) | undefined;
     };

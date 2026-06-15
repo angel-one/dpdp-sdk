@@ -8,5 +8,6 @@ export {
 	getVisiblePurposes,
 	isConsentUiResponse,
 	MANDATORY_ERROR_MESSAGE,
+	resolveDismissible,
 	resolveSelectedIdsForAction
 } from './consent';

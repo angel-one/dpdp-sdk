@@ -1,11 +1,13 @@
 import { writable } from 'svelte/store';
-import type { IConsentStoreState, IConsentUiResponse } from '$lib/types';
+import type { IConsentStoreState, IConsentUiOptions, IConsentUiResponse } from '$lib/types';
 
 const initialState: IConsentStoreState = {
 	hydrated: false,
 	loading: false,
+	submitting: false,
 	error: null,
-	data: null
+	data: null,
+	uiOptions: {}
 };
 
 const SetupConsentStore = () => {
@@ -30,6 +32,13 @@ export function setConsentLoading(loading: boolean) {
 	}));
 }
 
+export function setConsentSubmitting(submitting: boolean) {
+	ConsentStore.update((store) => ({
+		...store,
+		submitting
+	}));
+}
+
 export function setConsentError(error: string | null) {
 	ConsentStore.update((store) => ({
 		...store,
@@ -41,6 +50,13 @@ export function setConsentData(data: IConsentUiResponse | null) {
 	ConsentStore.update((store) => ({
 		...store,
 		data
+	}));
+}
+
+export function setConsentUiOptions(uiOptions: IConsentUiOptions) {
+	ConsentStore.update((store) => ({
+		...store,
+		uiOptions
 	}));
 }
 

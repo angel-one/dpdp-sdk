@@ -2,12 +2,19 @@ import type {
 	ConsentButtonAction,
 	IConsentActionSet,
 	IConsentData,
+	IConsentLayout,
 	IConsentPurpose,
+	IConsentRecordRequest,
 	IConsentSubmitPayload,
 	IConsentUiResponse
 } from '$lib/types';
 
 export const MANDATORY_ERROR_MESSAGE = 'This is a mandatory consent. Tick to continue.';
+
+export function resolveDismissible(layout: IConsentLayout, allowDismiss?: boolean) {
+	if (allowDismiss !== undefined) return allowDismiss;
+	return layout.dismissible === true;
+}
 
 export function getVisiblePurposes(purposes: IConsentPurpose[]) {
 	return purposes.filter((purpose) => purpose.visible);
@@ -70,7 +77,7 @@ export function isConsentUiResponse(value: unknown): value is IConsentUiResponse
 export function buildRecordPayload(
 	response: IConsentUiResponse,
 	payload: IConsentSubmitPayload
-) {
+): IConsentRecordRequest {
 	const { record } = response.data.actions;
 
 	return {

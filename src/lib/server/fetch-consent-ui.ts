@@ -1,5 +1,6 @@
 import { buildConsentUiUrl, getCmsBaseUrl } from '$lib/constants/base-urls';
 import { DEFAULT_CONSENT_TIMEOUT_MS, type DpdpEnv } from '$lib/managers/dpdp/types';
+import { isConsentUiResponse } from '$lib/utils';
 import type { IConsentUiResponse } from '$lib/types';
 
 export interface FetchConsentUiParams {
@@ -62,5 +63,11 @@ export async function fetchConsentUiFromCms(
 		throw new Error(`Failed to fetch consent UI: ${response.status}`);
 	}
 
-	return response.json() as Promise<IConsentUiResponse>;
+	const data: unknown = await response.json();
+
+	if (!isConsentUiResponse(data)) {
+		throw new Error('Invalid consent UI response from CMS');
+	}
+
+	return data;
 }

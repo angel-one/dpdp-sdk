@@ -86,21 +86,45 @@ export interface IConsentData {
 	actions: IConsentActions;
 }
 
+export interface IConsentLayout {
+	/** When true, the sheet can be dismissed via close button or Escape. Defaults to blocking. */
+	dismissible?: boolean;
+}
+
 export interface IConsentUiResponse {
 	schemaVersion: string;
 	templateKey: string;
 	templateVersion: number;
 	noticeId: string;
 	languageId: string;
-	layout: Record<string, unknown>;
+	layout: IConsentLayout;
 	data: IConsentData;
+}
+
+export interface IConsentUiOptions {
+	allowDismiss?: boolean;
+	zIndexBase?: number;
 }
 
 export interface IConsentStoreState {
 	hydrated: boolean;
 	loading: boolean;
+	submitting: boolean;
 	error: string | null;
 	data: IConsentUiResponse | null;
+	uiOptions: IConsentUiOptions;
+}
+
+export interface IConsentRecordRequest {
+	url: string;
+	method: string;
+	body: {
+		noticeId: string;
+		templateVersion: number;
+		action: ConsentButtonAction;
+		purposeIds: string[];
+		status: string;
+	};
 }
 
 export interface IConsentSubmitPayload {

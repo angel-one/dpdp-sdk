@@ -16,10 +16,7 @@ declare class Dpdp {
     }): Promise<IConsentUiResponse>;
     setConsentData(data: IConsentUiResponse): Promise<void>;
     setConsentError(error: string | null): Promise<void>;
-    /**
-     * Handles a consent action from the UI. Builds the record payload from CMS config;
-     * POST to record.url will be wired when the record endpoint is integrated.
-     */
+    /** Submits consent to the CMS record endpoint, then closes the sheet on success. */
     submitConsent(payload: IConsentSubmitPayload): Promise<void>;
     closeConsent(): void;
     destroy(): void;

@@ -1,0 +1,36 @@
+.dpdp-root .dpdp-checkbox-wrap {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	min-width: 2.75rem;
+	min-height: 2.75rem;
+	margin: -0.375rem 0;
+	flex-shrink: 0;
+	cursor: pointer;
+}
+
+.dpdp-root .dpdp-checkbox {
+	width: 1.25rem;
+	height: 1.25rem;
+	flex-shrink: 0;
+	border-radius: 0.25rem;
+	border: 1px solid #e5e7eb;
+	border: 1px solid var(--dpdp-color-border);
+	accent-color: #3f5bd9;
+	accent-color: var(--dpdp-color-primary);
+	cursor: pointer;
+}
+
+.dpdp-root .dpdp-checkbox:focus-visible {
+	outline: none;
+	box-shadow: var(--dpdp-focus-ring);
+}
+
+.dpdp-root .dpdp-checkbox:disabled {
+	cursor: not-allowed;
+	opacity: 0.6;
+}
+
+.dpdp-root .dpdp-checkbox-wrap:has(.dpdp-checkbox:disabled) {
+	cursor: not-allowed;
+}

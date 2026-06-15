@@ -1,4 +1,4 @@
-import type { IConsentStoreState, IConsentUiResponse } from '../types';
+import type { IConsentStoreState, IConsentUiOptions, IConsentUiResponse } from '../types';
 export declare const ConsentStore: {
     subscribe: (this: void, run: import("svelte/store").Subscriber<IConsentStoreState>, invalidate?: import("svelte/store").Invalidator<IConsentStoreState> | undefined) => import("svelte/store").Unsubscriber;
     set: (this: void, value: IConsentStoreState) => void;
@@ -6,6 +6,8 @@ export declare const ConsentStore: {
 };
 export declare function updateConsentHydration(hydrated: boolean): void;
 export declare function setConsentLoading(loading: boolean): void;
+export declare function setConsentSubmitting(submitting: boolean): void;
 export declare function setConsentError(error: string | null): void;
 export declare function setConsentData(data: IConsentUiResponse | null): void;
+export declare function setConsentUiOptions(uiOptions: IConsentUiOptions): void;
 export declare function resetConsentStore(): void;

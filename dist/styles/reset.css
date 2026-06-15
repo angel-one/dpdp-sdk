@@ -1,0 +1,15 @@
+.dpdp-root *,
+.dpdp-root *::before,
+.dpdp-root *::after {
+	box-sizing: border-box;
+}
+
+.dpdp-root h1,
+.dpdp-root h2,
+.dpdp-root h3,
+.dpdp-root p,
+.dpdp-root ul,
+.dpdp-root ol {
+	margin: 0;
+	padding: 0;
+}

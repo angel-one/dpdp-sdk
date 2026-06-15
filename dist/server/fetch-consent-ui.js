@@ -1,5 +1,6 @@
 import { buildConsentUiUrl, getCmsBaseUrl } from '../constants/base-urls';
 import { DEFAULT_CONSENT_TIMEOUT_MS } from '../managers/dpdp/types';
+import { isConsentUiResponse } from '../utils';
 export function getForwardedHeaders(request) {
     const headers = new Headers();
     const cookie = request.headers.get('cookie');
@@ -36,5 +37,9 @@ export async function fetchConsentUiFromCms(params, options = {}) {
     if (!response.ok) {
         throw new Error(`Failed to fetch consent UI: ${response.status}`);
     }
-    return response.json();
+    const data = await response.json();
+    if (!isConsentUiResponse(data)) {
+        throw new Error('Invalid consent UI response from CMS');
+    }
+    return data;
 }
