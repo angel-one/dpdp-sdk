@@ -1,6 +1,6 @@
 {
 	"name": "dpdp-sdk",
-	"version": "0.4.1",
+	"version": "0.4.2",
 	"type": "module",
 	"engines": {
 		"node": ">=18.0.0"
@@ -24,8 +24,13 @@
 		},
 		"./styles": "./dist/styles/dpdp.css"
 	},
-	"files": ["src", "dist"],
-	"sideEffects": ["**/*.css"],
+	"files": [
+		"src",
+		"dist"
+	],
+	"sideEffects": [
+		"**/*.css"
+	],
 	"peerDependencies": {
 		"@sveltejs/kit": "^2.5.0",
 		"svelte": "^4.2.0 || ^5.0.0"
@@ -33,7 +38,7 @@
 	"devDependencies": {
 		"@sveltejs/adapter-auto": "^3.0.0",
 		"@sveltejs/kit": "^2.5.18",
-		"@sveltejs/package": "^2.5.8",
+		"@sveltejs/package": "2.3.10",
 		"@sveltejs/vite-plugin-svelte": "^3.0.0",
 		"@types/node": "^20.0.0",
 		"publint": "^0.3.21",
@@ -47,5 +52,10 @@
 	"types": "./dist/index.d.ts",
 	"publishConfig": {
 		"registry": "https://nexusoss.prod.angelcloud.in/repository/npm-hosted"
+	},
+	"pnpm": {
+		"overrides": {
+			"chokidar": "3.6.0"
+		}
 	}
 }
