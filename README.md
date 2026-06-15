@@ -2,7 +2,7 @@
 
 SvelteKit library for DPDP consent management. Ships a bottom sheet UI and loads consent configuration server-first, with an automatic client-side proxy fallback if the server fetch fails.
 
-**v0.2.0** — Svelte 4 + Tailwind 3 compatible (works with `onr-spark-mweb` stack: Svelte 4.2, Kit 2.5, Tailwind 3.3).
+**v0.3.0** — Self-contained vanilla CSS (no Tailwind dependency). Works in any SvelteKit host regardless of Tailwind version or config.
 
 ## Compatibility
 
@@ -10,9 +10,9 @@ SvelteKit library for DPDP consent management. Ships a bottom sheet UI and loads
 |---|---|
 | Svelte | `^4.2.0` or `^5.0.0` |
 | SvelteKit | `^2.5.0` |
-| Tailwind | 3.x (uses standard utility classes + host `primary` color) |
+| CSS | Built-in — no Tailwind setup required |
 
-Host app must include `primary: '#3F5BD9'` (or similar) in Tailwind config and scan `node_modules/dpdp-sdk/dist/**` in `content`.
+Styles ship with the SDK and are scoped under `.dpdp-root`. Host apps do **not** need to add SDK paths to Tailwind `content`.
 
 
 ## How to run
@@ -27,17 +27,11 @@ The demo app loads consent in `+layout.server.ts` via `fetchConsentUiFromCms` (1
 
 ## Host integration
 
-1. Install `dpdp-sdk` and add SDK to Tailwind `content`:
+1. Install `dpdp-sdk`:
 
-```js
-// tailwind.config.cjs
-content: [
-  './src/**/*.{html,js,svelte,ts}',
-  './node_modules/dpdp-sdk/dist/**/*.{html,js,svelte,ts}'
-]
+```bash
+pnpm add github:your-org/dpdp-sdk#v0.3.0
 ```
-
-Ensure `primary` color exists in your theme (Angel apps already have `primary: '#3F5BD9'`).
 
 2. Load consent server-side in `+layout.server.ts`:
 
@@ -74,7 +68,7 @@ export const load: LayoutServerLoad = async ({ request }) => {
 import { dpdp, Consent } from 'dpdp-sdk';
 import { onDestroy, onMount } from 'svelte';
 
-let { data } = $props();
+export let data;
 
 onMount(async () => {
   await dpdp.init({
@@ -100,7 +94,26 @@ onDestroy(() => {
 <Consent />
 ```
 
+`<Consent />` auto-imports SDK styles. No extra CSS setup needed.
+
 4. Copy `src/routes/api/consent/ui/+server.ts` — required for the client fallback. Auth cookies/headers are forwarded to CMS automatically.
+
+### Theming (optional)
+
+Override CSS variables on `.dpdp-root` in your host app:
+
+```css
+.dpdp-root {
+  --dpdp-color-primary: #3f5bd9;
+  --dpdp-font-family: 'Roboto', sans-serif;
+}
+```
+
+Or import the stylesheet directly for advanced setups:
+
+```javascript
+import 'dpdp-sdk/styles';
+```
 
 ## Public API
 
@@ -121,20 +134,25 @@ import { fetchConsentUiFromCms } from 'dpdp-sdk/server';
 
 ## Package & publish
 
-Build the distributable (required before tagging a GitHub release — `dist/` is committed so consumers can install via `github:org/dpdp-sdk#v0.2.0`):
+Build the distributable (required before tagging a GitHub release — `dist/` is committed so consumers can install via `github:org/dpdp-sdk#v0.3.0`):
 
 ```bash
 pnpm run package
 git add dist
 git commit -m "chore: build dist for release"
-git tag v0.1.0
+git tag v0.3.0
 git push origin main --tags
 ```
 
 Install in a host SvelteKit app:
 
 ```bash
-pnpm add github:your-org/dpdp-sdk#v0.2.0
+pnpm add github:your-org/dpdp-sdk#v0.3.0
 ```
 
 `prepack` also runs `svelte-package` automatically before `npm publish` / `pnpm pack` if you publish to npm or GitHub Packages later.
+
+## Migrating from v0.2.0
+
+- Remove `node_modules/dpdp-sdk/dist/**` from Tailwind `content` — no longer needed.
+- Bump to `v0.3.0` and reinstall. UI styling is now self-contained.

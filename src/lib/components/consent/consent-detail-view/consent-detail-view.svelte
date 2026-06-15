@@ -12,22 +12,22 @@
 </script>
 
 <article aria-labelledby={titleId}>
-	<h2 id={titleId} class="text-lg font-semibold text-gray-900">{title}</h2>
+	<h2 id={titleId} class="dpdp-detail-view__title">{title}</h2>
 
 	{#if purpose.description}
-		<p class="mt-2 text-sm leading-6 text-gray-600">{purpose.description}</p>
+		<p class="dpdp-detail-view__description">{purpose.description}</p>
 	{/if}
 
-	<div class="mt-6 space-y-5">
+	<div class="dpdp-detail-view__sections">
 		{#each purpose.sections as section (section.key)}
 			<ConsentPurposeSection {section} />
 		{/each}
 	</div>
 
 	{#if staticTextEntries.length}
-		<div class="mt-6 space-y-2 border-t border-gray-200 pt-4">
+		<div class="dpdp-detail-view__static">
 			{#each staticTextEntries as entry (entry.key)}
-				<p class="text-xs leading-5 text-gray-600">{entry.text}</p>
+				<p class="dpdp-detail-view__static-text">{entry.text}</p>
 			{/each}
 		</div>
 	{/if}

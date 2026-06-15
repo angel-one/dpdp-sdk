@@ -26,9 +26,9 @@
 	});
 </script>
 
-<div class="flex min-h-screen flex-col bg-gray-50 p-4">
-	<h1 class="text-xl font-semibold text-gray-900">DPDP SDK Demo</h1>
-	<p class="mt-2 text-sm text-gray-600">
+<div class="dpdp-demo">
+	<h1 class="dpdp-demo__title">DPDP SDK Demo</h1>
+	<p class="dpdp-demo__description">
 		Consent UI is loaded server-side in <code>+layout.server.ts</code> with a client-side proxy
 		fallback if the server fetch fails.
 	</p>

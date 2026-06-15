@@ -6,7 +6,7 @@ export let onAction = void 0;
 $: secondaryInactive = isSecondaryInactive(inactive, actionSet.secondary?.action);
 </script>
 
-<div class="space-y-2" role="group" aria-label="Consent actions">
+<div class="dpdp-button-bar" role="group" aria-label="Consent actions">
 	<Button
 		variant="primary"
 		label={actionSet.primary.label}

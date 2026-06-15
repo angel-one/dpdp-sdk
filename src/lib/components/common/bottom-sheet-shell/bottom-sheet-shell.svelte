@@ -21,16 +21,16 @@
 
 <svelte:window on:keydown={handleKeydown} />
 
-<div class="fixed inset-0 z-50 flex items-end bg-black/40" role="presentation">
+<div class="dpdp-sheet-overlay" role="presentation">
 	<div
 		use:focusTrap
-		class="flex max-h-[90dvh] w-full flex-col rounded-t-2xl bg-white shadow-[0px_-2px_4px_rgba(138,141,153,0.16)]"
+		class="dpdp-sheet"
 		role="dialog"
 		aria-modal="true"
 		aria-labelledby={titleId}
 	>
-		<div class="flex items-center justify-between border-b border-gray-200 px-4 py-3">
-			<div class="flex min-w-0 flex-1 items-center gap-2">
+		<div class="dpdp-sheet__header">
+			<div class="dpdp-sheet__header-start">
 				{#if onBack}
 					<BackButton label={backLabel} onClick={onBack} />
 				{/if}
@@ -41,12 +41,12 @@
 			{/if}
 		</div>
 
-		<div class="flex-1 overflow-y-auto px-4 py-4">
+		<div class="dpdp-sheet__body">
 			<slot />
 		</div>
 
 		{#if $$slots.footer}
-			<div class="border-t border-gray-200 px-4 py-4">
+			<div class="dpdp-sheet__footer">
 				<slot name="footer" />
 			</div>
 		{/if}

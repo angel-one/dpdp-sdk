@@ -3,12 +3,7 @@
 	export let iconClass = '';
 </script>
 
-<svg
-	class="h-5 w-5 shrink-0 text-primary {iconClass}"
-	viewBox="0 0 20 20"
-	fill="none"
-	aria-hidden="true"
->
+<svg class="dpdp-consent-icon {iconClass}" viewBox="0 0 20 20" fill="none" aria-hidden="true">
 	{#if name === 'cms_compass'}
 		<circle cx="10" cy="10" r="7" stroke="currentColor" stroke-width="1.5" />
 		<path d="M10 6l1.5 4.5L10 10 8.5 10.5 10 6z" fill="currentColor" />

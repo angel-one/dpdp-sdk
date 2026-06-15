@@ -8,8 +8,8 @@ export let onToggleSelect = void 0;
 export let onViewDetail = void 0;
 </script>
 
-<h2 id={titleId} class="text-lg font-semibold text-gray-900">{notice.title}</h2>
-<p class="mt-2 text-sm leading-6 text-gray-600">{notice.subtitle}</p>
+<h2 id={titleId} class="dpdp-list-view__title">{notice.title}</h2>
+<p class="dpdp-list-view__subtitle">{notice.subtitle}</p>
 
 <ConsentPurposeList
 	{purposes}

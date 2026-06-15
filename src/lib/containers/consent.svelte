@@ -1,4 +1,5 @@
 <script lang="ts">
+	import '$lib/styles/dpdp.css';
 	import { dpdp } from '$lib';
 	import BottomSheet from '$lib/components/bottom-sheet/bottom-sheet.svelte';
 	import ErrorBanner from '$lib/components/common/error-banner/error-banner.svelte';
@@ -15,14 +16,16 @@
 	}
 </script>
 
-{#if $ConsentStore.hydrated && $ConsentStore.data}
-	<BottomSheet data={$ConsentStore.data} onSubmit={handleSubmit} onClose={handleClose} />
-{/if}
+<div class="dpdp-root">
+	{#if $ConsentStore.hydrated && $ConsentStore.data}
+		<BottomSheet data={$ConsentStore.data} onSubmit={handleSubmit} onClose={handleClose} />
+	{/if}
 
-{#if $ConsentStore.loading}
-	<LoadingOverlay />
-{/if}
+	{#if $ConsentStore.loading}
+		<LoadingOverlay />
+	{/if}
 
-{#if $ConsentStore.error}
-	<ErrorBanner message={$ConsentStore.error} />
-{/if}
+	{#if $ConsentStore.error}
+		<ErrorBanner message={$ConsentStore.error} />
+	{/if}
+</div>

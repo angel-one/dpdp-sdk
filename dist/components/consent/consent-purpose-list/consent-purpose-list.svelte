@@ -6,7 +6,7 @@ export let onToggleSelect = void 0;
 export let onViewDetail = void 0;
 </script>
 
-<div class="mt-4 space-y-3" role="list" aria-label="Consent purposes">
+<div class="dpdp-purpose-list" role="list" aria-label="Consent purposes">
 	{#each purposes as purpose (purpose.id)}
 		<div role="listitem">
 			<ConsentPurposeCard

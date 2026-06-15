@@ -1,4 +1,5 @@
 import { SvelteComponent } from "svelte";
+import '../styles/dpdp.css';
 declare const __propDef: {
     props: Record<string, never>;
     events: {
