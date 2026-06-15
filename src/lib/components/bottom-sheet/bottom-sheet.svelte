@@ -3,10 +3,16 @@
 	import Button from '$lib/components/common/button/button.svelte';
 	import ConsentButtonBar from '$lib/components/consent/consent-button-bar/consent-button-bar.svelte';
 	import ConsentDetailView from '$lib/components/consent/consent-detail-view/consent-detail-view.svelte';
-	import { getDetailConfirmLabel } from '$lib/components/consent/consent-detail-view/consent-detail-view.logic';
 	import ConsentListView from '$lib/components/consent/consent-list-view/consent-list-view.svelte';
 	import { ConsentStore } from '$lib/stores/consent.store';
-	import { getButtonActionSet, getVisiblePurposes, resolveDismissible } from '$lib/utils';
+	import {
+		getButtonActionSet,
+		getVisiblePurposes,
+		resolveDismissible,
+		getDetailConfirmLabel,
+		getBackLabel,
+		getMandatoryErrorMessage
+	} from '$lib/utils';
 	import type { ConsentButtonAction, IConsentSubmitPayload, IConsentUiResponse } from '$lib/types';
 	import { tick } from 'svelte';
 	import {
@@ -48,7 +54,10 @@
 		sheetState.selectedIds,
 		sheetState.validationAttempted
 	);
-	$: detailConfirmLabel = activePurpose ? getDetailConfirmLabel(activePurpose) : '';
+	$: labels = data.data.labels;
+	$: mandatoryErrorMessage = getMandatoryErrorMessage(labels);
+	$: detailConfirmLabel = activePurpose ? getDetailConfirmLabel(activePurpose, labels) : '';
+	$: backLabel = getBackLabel(labels);
 	$: dismissible = resolveDismissible(data.layout, $ConsentStore.uiOptions.allowDismiss);
 	$: submitting = $ConsentStore.submitting;
 
@@ -109,7 +118,7 @@
 	{dismissible}
 	onClose={viewMode === 'list' ? onClose : undefined}
 	onBack={viewMode === 'detail' ? handleBackFromDetail : undefined}
-	backLabel="Back to consent list"
+	{backLabel}
 >
 	{#if viewMode === 'detail' && activePurpose}
 		<ConsentDetailView purpose={activePurpose} staticText={data.data.staticText} />
@@ -119,6 +128,7 @@
 			{purposes}
 			selectedIds={sheetState.selectedIds}
 			{errorPurposeIds}
+			{mandatoryErrorMessage}
 			titleId={listTitleId}
 			subtitleId={listSubtitleId}
 			onToggleSelect={handleToggleSelect}

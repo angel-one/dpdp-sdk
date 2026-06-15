@@ -44,6 +44,13 @@ export interface IConsentStaticText {
 export interface IConsentLabels {
 	accept: string;
 	reject: string;
+	audio?: string;
+	/** Shown when a mandatory purpose is unchecked on submit. */
+	mandatoryError?: string;
+	/** Detail view confirm CTA for mandatory purposes. */
+	gotIt?: string;
+	/** Back navigation label in detail view. */
+	back?: string;
 }
 
 export interface IConsentFlags {

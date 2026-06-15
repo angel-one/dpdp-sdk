@@ -4,12 +4,12 @@
 	import Checkbox from '$lib/components/common/checkbox/checkbox.svelte';
 	import Chevron from '$lib/components/common/chevron/chevron.svelte';
 	import { getBadgeVariant, getCheckboxLabel } from './consent-purpose-card.logic';
-	import { MANDATORY_ERROR_MESSAGE } from '$lib/utils';
 	import type { IConsentPurpose } from '$lib/types';
 
 	export let purpose: IConsentPurpose;
 	export let selected = false;
 	export let showError = false;
+	export let mandatoryErrorMessage = '';
 	export let onToggleSelect: (() => void) | undefined = undefined;
 	export let onViewDetail: (() => void) | undefined = undefined;
 </script>
@@ -50,7 +50,7 @@
 
 	{#if showError}
 		<p class="dpdp-purpose-card__error" role="alert" data-dpdp-validation-error tabindex="-1">
-			{MANDATORY_ERROR_MESSAGE}
+			{mandatoryErrorMessage}
 		</p>
 	{/if}
 </Card>

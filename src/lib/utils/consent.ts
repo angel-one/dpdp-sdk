@@ -3,13 +3,36 @@ import type {
 	IConsentActionSet,
 	IConsentData,
 	IConsentLayout,
+	IConsentLabels,
 	IConsentPurpose,
 	IConsentRecordRequest,
 	IConsentSubmitPayload,
 	IConsentUiResponse
 } from '$lib/types';
 
-export const MANDATORY_ERROR_MESSAGE = 'This is a mandatory consent. Tick to continue.';
+export const DEFAULT_MANDATORY_ERROR_MESSAGE =
+	'This is a mandatory consent. Tick to continue.';
+export const DEFAULT_GOT_IT_LABEL = 'GOT IT';
+export const DEFAULT_BACK_LABEL = 'Back to consent list';
+
+/** @deprecated Use getMandatoryErrorMessage(labels) */
+export const MANDATORY_ERROR_MESSAGE = DEFAULT_MANDATORY_ERROR_MESSAGE;
+
+export function getMandatoryErrorMessage(labels: IConsentLabels) {
+	return labels.mandatoryError?.trim() || DEFAULT_MANDATORY_ERROR_MESSAGE;
+}
+
+export function getDetailConfirmLabel(purpose: IConsentPurpose, labels: IConsentLabels) {
+	if (purpose.mandatory) {
+		return labels.gotIt?.trim() || DEFAULT_GOT_IT_LABEL;
+	}
+
+	return labels.accept?.trim() || 'Accept';
+}
+
+export function getBackLabel(labels: IConsentLabels) {
+	return labels.back?.trim() || DEFAULT_BACK_LABEL;
+}
 
 export function resolveDismissible(layout: IConsentLayout, allowDismiss?: boolean) {
 	if (allowDismiss !== undefined) return allowDismiss;
@@ -71,7 +94,12 @@ export function resolveSelectedIdsForAction(
 export function isConsentUiResponse(value: unknown): value is IConsentUiResponse {
 	if (!value || typeof value !== 'object') return false;
 	const response = value as Partial<IConsentUiResponse>;
-	return Boolean(response.data?.purposes && response.data?.notice);
+	return Boolean(
+		response.data?.purposes &&
+			response.data?.notice &&
+			response.data?.labels?.accept?.trim() &&
+			response.data?.labels?.reject?.trim()
+	);
 }
 
 export function buildRecordPayload(

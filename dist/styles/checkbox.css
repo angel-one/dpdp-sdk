@@ -14,9 +14,7 @@
 	height: 1.25rem;
 	flex-shrink: 0;
 	border-radius: 0.25rem;
-	border: 1px solid #e5e7eb;
 	border: 1px solid var(--dpdp-color-border);
-	accent-color: #3f5bd9;
 	accent-color: var(--dpdp-color-primary);
 	cursor: pointer;
 }

@@ -2,6 +2,7 @@
 export let purposes = [];
 export let selectedIds = /* @__PURE__ */ new Set();
 export let errorPurposeIds = /* @__PURE__ */ new Set();
+export let mandatoryErrorMessage = "";
 export let onToggleSelect = void 0;
 export let onViewDetail = void 0;
 </script>
@@ -13,6 +14,7 @@ export let onViewDetail = void 0;
 				{purpose}
 				selected={selectedIds.has(purpose.id)}
 				showError={errorPurposeIds.has(purpose.id)}
+				{mandatoryErrorMessage}
 				onToggleSelect={() => onToggleSelect?.(purpose.id, purpose.locked)}
 				onViewDetail={() => onViewDetail?.(purpose.id)}
 			/>

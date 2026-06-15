@@ -28,7 +28,6 @@
 	--dpdp-sheet-max-width: 32rem;
 
 	font-family: var(--dpdp-font-family);
-	color: #111827;
 	color: var(--dpdp-color-text);
 	box-sizing: border-box;
 }

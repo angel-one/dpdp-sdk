@@ -8,6 +8,7 @@
 	export let errorPurposeIds: Set<string> = new Set();
 	export let titleId = '';
 	export let subtitleId = '';
+	export let mandatoryErrorMessage = '';
 	export let onToggleSelect: ((purposeId: string, locked: boolean) => void) | undefined = undefined;
 	export let onViewDetail: ((purposeId: string) => void) | undefined = undefined;
 </script>
@@ -19,6 +20,7 @@
 	{purposes}
 	{selectedIds}
 	{errorPurposeIds}
+	{mandatoryErrorMessage}
 	{onToggleSelect}
 	{onViewDetail}
 />

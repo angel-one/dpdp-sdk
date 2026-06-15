@@ -5,17 +5,14 @@
 	width: 2.75rem;
 	height: 2.75rem;
 	border: none;
-	border-radius: 9999px;
 	border-radius: var(--dpdp-radius-full);
 	background: transparent;
-	color: #4b5563;
 	color: var(--dpdp-color-text-muted);
 	cursor: pointer;
 	transition: background-color 0.15s ease;
 }
 
 .dpdp-root .dpdp-icon-btn:hover {
-	background-color: #f9fafb;
 	background-color: var(--dpdp-color-hover);
 }
 
@@ -26,7 +23,6 @@
 
 .dpdp-root .dpdp-chevron {
 	flex-shrink: 0;
-	color: #4b5563;
 	color: var(--dpdp-color-text-muted);
 }
 
@@ -34,6 +30,5 @@
 	width: 1.25rem;
 	height: 1.25rem;
 	flex-shrink: 0;
-	color: #3f5bd9;
 	color: var(--dpdp-color-primary);
 }

@@ -1,12 +1,10 @@
 .dpdp-root .dpdp-sheet-overlay {
 	position: fixed;
 	inset: 0;
-	z-index: 9999;
 	z-index: var(--dpdp-z-overlay);
 	display: flex;
 	align-items: flex-end;
 	justify-content: center;
-	background-color: rgba(0, 0, 0, 0.4);
 	background-color: var(--dpdp-color-overlay);
 }
 
@@ -14,16 +12,11 @@
 	display: flex;
 	max-height: 90dvh;
 	width: 100%;
-	max-width: 32rem;
 	max-width: var(--dpdp-sheet-max-width);
 	flex-direction: column;
-	border-radius: 1rem 1rem 0 0;
 	border-radius: var(--dpdp-radius-xl) var(--dpdp-radius-xl) 0 0;
-	background-color: #ffffff;
 	background-color: var(--dpdp-color-white);
-	box-shadow: 0 -2px 4px rgba(138, 141, 153, 0.16);
 	box-shadow: var(--dpdp-shadow-sheet);
-	z-index: 10001;
 	z-index: var(--dpdp-z-sheet);
 }
 
@@ -31,7 +24,6 @@
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
-	border-bottom: 1px solid #e5e7eb;
 	border-bottom: 1px solid var(--dpdp-color-border);
 	padding: 0.75rem 1rem;
 	padding-top: max(0.75rem, env(safe-area-inset-top));
@@ -54,7 +46,6 @@
 }
 
 .dpdp-root .dpdp-sheet__footer {
-	border-top: 1px solid #e5e7eb;
 	border-top: 1px solid var(--dpdp-color-border);
 	padding: 1rem;
 	padding-bottom: max(1rem, env(safe-area-inset-bottom));
@@ -68,7 +59,6 @@
 
 	.dpdp-root .dpdp-sheet {
 		max-height: min(90dvh, 40rem);
-		border-radius: 1rem;
 		border-radius: var(--dpdp-radius-xl);
 	}
 }

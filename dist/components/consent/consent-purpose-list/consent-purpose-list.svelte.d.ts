@@ -5,6 +5,7 @@ declare const __propDef: {
         purposes?: IConsentPurpose[];
         selectedIds?: Set<string>;
         errorPurposeIds?: Set<string>;
+        mandatoryErrorMessage?: string;
         onToggleSelect?: ((purposeId: string, locked: boolean) => void) | undefined;
         onViewDetail?: ((purposeId: string) => void) | undefined;
     };

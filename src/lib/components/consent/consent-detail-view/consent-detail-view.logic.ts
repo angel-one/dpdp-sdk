@@ -1,12 +1,5 @@
 import type { IConsentPurpose, IConsentStaticText } from '$lib/types';
 
-export const DETAIL_CONFIRM_LABEL_MANDATORY = 'GOT IT';
-export const DETAIL_CONFIRM_LABEL_OPTIONAL = 'I ACCEPT';
-
-export function getDetailConfirmLabel(purpose: IConsentPurpose) {
-	return purpose.mandatory ? DETAIL_CONFIRM_LABEL_MANDATORY : DETAIL_CONFIRM_LABEL_OPTIONAL;
-}
-
 export function getDetailTitle(purpose: IConsentPurpose) {
 	return `${purpose.name} Consent`;
 }

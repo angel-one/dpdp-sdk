@@ -3,10 +3,10 @@ import Card from "../../common/card/card.svelte";
 import Checkbox from "../../common/checkbox/checkbox.svelte";
 import Chevron from "../../common/chevron/chevron.svelte";
 import { getBadgeVariant, getCheckboxLabel } from "./consent-purpose-card.logic";
-import { MANDATORY_ERROR_MESSAGE } from "../../../utils";
 export let purpose;
 export let selected = false;
 export let showError = false;
+export let mandatoryErrorMessage = "";
 export let onToggleSelect = void 0;
 export let onViewDetail = void 0;
 </script>
@@ -47,7 +47,7 @@ export let onViewDetail = void 0;
 
 	{#if showError}
 		<p class="dpdp-purpose-card__error" role="alert" data-dpdp-validation-error tabindex="-1">
-			{MANDATORY_ERROR_MESSAGE}
+			{mandatoryErrorMessage}
 		</p>
 	{/if}
 </Card>

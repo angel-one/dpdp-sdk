@@ -2,10 +2,16 @@
 import Button from "../common/button/button.svelte";
 import ConsentButtonBar from "../consent/consent-button-bar/consent-button-bar.svelte";
 import ConsentDetailView from "../consent/consent-detail-view/consent-detail-view.svelte";
-import { getDetailConfirmLabel } from "../consent/consent-detail-view/consent-detail-view.logic";
 import ConsentListView from "../consent/consent-list-view/consent-list-view.svelte";
 import { ConsentStore } from "../../stores/consent.store";
-import { getButtonActionSet, getVisiblePurposes, resolveDismissible } from "../../utils";
+import {
+  getButtonActionSet,
+  getVisiblePurposes,
+  resolveDismissible,
+  getDetailConfirmLabel,
+  getBackLabel,
+  getMandatoryErrorMessage
+} from "../../utils";
 import { tick } from "svelte";
 import {
   buildSubmitPayload,
@@ -40,7 +46,10 @@ $: errorPurposeIds = getErrorPurposeIdSet(
   sheetState.selectedIds,
   sheetState.validationAttempted
 );
-$: detailConfirmLabel = activePurpose ? getDetailConfirmLabel(activePurpose) : "";
+$: labels = data.data.labels;
+$: mandatoryErrorMessage = getMandatoryErrorMessage(labels);
+$: detailConfirmLabel = activePurpose ? getDetailConfirmLabel(activePurpose, labels) : "";
+$: backLabel = getBackLabel(labels);
 $: dismissible = resolveDismissible(data.layout, $ConsentStore.uiOptions.allowDismiss);
 $: submitting = $ConsentStore.submitting;
 $: sheetState.activeDetailPurposeId, scrollSheetToTop();
@@ -90,7 +99,7 @@ async function handleListAction(action) {
 	{dismissible}
 	onClose={viewMode === 'list' ? onClose : undefined}
 	onBack={viewMode === 'detail' ? handleBackFromDetail : undefined}
-	backLabel="Back to consent list"
+	{backLabel}
 >
 	{#if viewMode === 'detail' && activePurpose}
 		<ConsentDetailView purpose={activePurpose} staticText={data.data.staticText} />
@@ -100,6 +109,7 @@ async function handleListAction(action) {
 			{purposes}
 			selectedIds={sheetState.selectedIds}
 			{errorPurposeIds}
+			{mandatoryErrorMessage}
 			titleId={listTitleId}
 			subtitleId={listSubtitleId}
 			onToggleSelect={handleToggleSelect}

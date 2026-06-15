@@ -5,6 +5,7 @@ export let selectedIds = /* @__PURE__ */ new Set();
 export let errorPurposeIds = /* @__PURE__ */ new Set();
 export let titleId = "";
 export let subtitleId = "";
+export let mandatoryErrorMessage = "";
 export let onToggleSelect = void 0;
 export let onViewDetail = void 0;
 </script>
@@ -16,6 +17,7 @@ export let onViewDetail = void 0;
 	{purposes}
 	{selectedIds}
 	{errorPurposeIds}
+	{mandatoryErrorMessage}
 	{onToggleSelect}
 	{onViewDetail}
 />

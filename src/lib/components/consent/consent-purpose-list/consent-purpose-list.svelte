@@ -5,6 +5,7 @@
 	export let purposes: IConsentPurpose[] = [];
 	export let selectedIds: Set<string> = new Set();
 	export let errorPurposeIds: Set<string> = new Set();
+	export let mandatoryErrorMessage = '';
 	export let onToggleSelect: ((purposeId: string, locked: boolean) => void) | undefined = undefined;
 	export let onViewDetail: ((purposeId: string) => void) | undefined = undefined;
 </script>
@@ -16,6 +17,7 @@
 				{purpose}
 				selected={selectedIds.has(purpose.id)}
 				showError={errorPurposeIds.has(purpose.id)}
+				{mandatoryErrorMessage}
 				onToggleSelect={() => onToggleSelect?.(purpose.id, purpose.locked)}
 				onViewDetail={() => onViewDetail?.(purpose.id)}
 			/>

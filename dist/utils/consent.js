@@ -1,4 +1,20 @@
-export const MANDATORY_ERROR_MESSAGE = 'This is a mandatory consent. Tick to continue.';
+export const DEFAULT_MANDATORY_ERROR_MESSAGE = 'This is a mandatory consent. Tick to continue.';
+export const DEFAULT_GOT_IT_LABEL = 'GOT IT';
+export const DEFAULT_BACK_LABEL = 'Back to consent list';
+/** @deprecated Use getMandatoryErrorMessage(labels) */
+export const MANDATORY_ERROR_MESSAGE = DEFAULT_MANDATORY_ERROR_MESSAGE;
+export function getMandatoryErrorMessage(labels) {
+    return labels.mandatoryError?.trim() || DEFAULT_MANDATORY_ERROR_MESSAGE;
+}
+export function getDetailConfirmLabel(purpose, labels) {
+    if (purpose.mandatory) {
+        return labels.gotIt?.trim() || DEFAULT_GOT_IT_LABEL;
+    }
+    return labels.accept?.trim() || 'Accept';
+}
+export function getBackLabel(labels) {
+    return labels.back?.trim() || DEFAULT_BACK_LABEL;
+}
 export function resolveDismissible(layout, allowDismiss) {
     if (allowDismiss !== undefined)
         return allowDismiss;
@@ -43,7 +59,10 @@ export function isConsentUiResponse(value) {
     if (!value || typeof value !== 'object')
         return false;
     const response = value;
-    return Boolean(response.data?.purposes && response.data?.notice);
+    return Boolean(response.data?.purposes &&
+        response.data?.notice &&
+        response.data?.labels?.accept?.trim() &&
+        response.data?.labels?.reject?.trim());
 }
 export function buildRecordPayload(response, payload) {
     const { record } = response.data.actions;
