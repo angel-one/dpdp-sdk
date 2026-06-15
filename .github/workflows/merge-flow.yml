@@ -1,0 +1,53 @@
+name: 'Merge Flow'
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - hotfix-*
+      - release-*
+    types:
+      - closed
+env:
+  NODE_VERSION: 20.19.6
+  MASTER_BRANCH: 'master'
+
+jobs:
+  merge-flow:
+    name: Release Build
+    if: ((github.event.pull_request.merged == true || github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/heads/release') || startsWith(github.ref, 'refs/heads/hotfix')) && github.actor != 'github-bot-angel')
+    runs-on: sre-aws-build
+    steps:
+      - name: Clean the workspace
+        uses: docker://alpine:3
+        with:
+          args: /bin/sh -c "rm -rf /github/workspace/.* || rm -rf /github/workspace/*"
+
+      - name: Check out code
+        uses: actions/checkout@v2
+        with:
+          token: ${{ secrets.SRE_GITHUB_BOT_TOKEN }}
+          fetch-depth: '0'
+
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          repository: 'angel-one/sre-npm-action'
+          ref: 9
+          token: ${{ secrets.SRE_GIT_READ_TOKEN }}
+          path: temp
+
+      - name: Copy custom action
+        shell: bash
+        run: |
+          cp temp/merge-flow/action.yml ./.github/workflows/
+
+      - name: npm action publish
+        uses: ./.github/workflows
+        id: image
+        with:
+          ARTIFACT_ID: dpdp-sdk
+          GITHUB_TOKEN: ${{ secrets.SRE_GITHUB_BOT_TOKEN }}
+          SRE_NEXUS_SECRET_KEY: ${{ secrets.NEXUSPROD_SECRET_KEY }}
+          HOTFIX_BRANCH_PATTERN: 'release-*.*.*'
