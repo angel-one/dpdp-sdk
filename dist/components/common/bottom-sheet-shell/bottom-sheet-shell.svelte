@@ -50,7 +50,13 @@ function handleKeydown(event) {
 		<div class="dpdp-sheet__header">
 			<div class="dpdp-sheet__header-start">
 				{#if onBack}
-					<BackButton label={backLabel} onClick={onBack} />
+					<div
+						class="dpdp-sheet__back"
+						in:fade={{ duration: reduceMotion ? 0 : 200 }}
+						out:fade={{ duration: reduceMotion ? 0 : 150 }}
+					>
+						<BackButton label={backLabel} onClick={onBack} />
+					</div>
 				{/if}
 				<slot name="header" />
 			</div>

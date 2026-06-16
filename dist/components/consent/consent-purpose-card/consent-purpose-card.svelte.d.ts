@@ -10,6 +10,9 @@ declare const __propDef: {
         onViewDetail?: (() => void) | undefined;
     };
     events: {
+        click: PointerEvent;
+        keydown: KeyboardEvent;
+    } & {
         [evt: string]: CustomEvent<any>;
     };
     slots: {};

@@ -4,4 +4,9 @@
 	.dpdp-root .dpdp-icon-btn {
 		transition: none;
 	}
+
+	.dpdp-root .dpdp-sheet-views-track,
+	.dpdp-root .dpdp-consent-top-nav__group {
+		transition: none;
+	}
 }

@@ -2,12 +2,15 @@
 .dpdp-root {
 	--dpdp-color-primary: #3f5bd9;
 	--dpdp-color-white: #ffffff;
-	--dpdp-color-text: #111827;
-	--dpdp-color-text-muted: #4b5563;
-	--dpdp-color-text-disabled: #9ca3af;
-	--dpdp-color-border: #e5e7eb;
-	--dpdp-color-bg-subtle: #f3f4f6;
-	--dpdp-color-bg-primary-subtle: #eff6ff;
+	--dpdp-color-text: #181f29;
+	--dpdp-color-text-muted: #425061;
+	--dpdp-color-text-disabled: #acb2bd;
+	--dpdp-color-border: #e8ebf1;
+	--dpdp-color-bg-subtle: #f4f6fb;
+	--dpdp-color-bg-primary-subtle: #e8ebfa;
+	--dpdp-color-checkbox-disabled: #acb2bd;
+	--dpdp-color-badge-mandatory-bg: #e4f8fb;
+	--dpdp-color-badge-mandatory-border: #c2e4de;
 	--dpdp-color-danger: #dc2626;
 	--dpdp-color-danger-border: #f87171;
 	--dpdp-color-danger-bg: #fef2f2;
@@ -17,9 +20,11 @@
 	--dpdp-color-inactive-bg: #e5e7eb;
 	--dpdp-shadow-sheet: 0 -2px 4px rgba(138, 141, 153, 0.16);
 	--dpdp-font-family: inherit;
+	--dpdp-radius-xs: 0.25rem;
+	--dpdp-radius-sm: 0.5rem;
 	--dpdp-radius-md: 0.5rem;
 	--dpdp-radius-lg: 0.75rem;
-	--dpdp-radius-xl: 1rem;
+	--dpdp-radius-xl: 1.25rem;
 	--dpdp-radius-full: 9999px;
 	--dpdp-z-overlay: 9999;
 	--dpdp-z-banner: 10000;

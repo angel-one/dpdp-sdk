@@ -1,9 +1,10 @@
 import { SvelteComponent } from "svelte";
-import type { IConsentNotice, IConsentPurpose } from '../../../types';
+import type { IConsentNotice, IConsentPurpose, IConsentStaticText } from '../../../types';
 declare const __propDef: {
     props: {
         notice: IConsentNotice;
         purposes?: IConsentPurpose[];
+        staticText?: IConsentStaticText | undefined;
         selectedIds?: Set<string>;
         errorPurposeIds?: Set<string>;
         titleId?: string;

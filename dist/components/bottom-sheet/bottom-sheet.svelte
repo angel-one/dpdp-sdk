@@ -3,16 +3,24 @@ import Button from "../common/button/button.svelte";
 import ConsentButtonBar from "../consent/consent-button-bar/consent-button-bar.svelte";
 import ConsentDetailView from "../consent/consent-detail-view/consent-detail-view.svelte";
 import ConsentListView from "../consent/consent-list-view/consent-list-view.svelte";
+import ConsentTopNav from "../consent/consent-top-nav/consent-top-nav.svelte";
 import { ConsentStore } from "../../stores/consent.store";
 import {
+  buildDetailSpeechText,
+  buildListSpeechText,
   getButtonActionSet,
   getVisiblePurposes,
   resolveDismissible,
   getDetailConfirmLabel,
   getBackLabel,
-  getMandatoryErrorMessage
+  getMandatoryErrorMessage,
+  isSpeechSupported,
+  speak,
+  stopSpeech
 } from "../../utils";
-import { tick } from "svelte";
+import { fade } from "svelte/transition";
+import { cubicOut } from "svelte/easing";
+import { onDestroy, onMount, tick } from "svelte";
 import {
   buildSubmitPayload,
   canSubmitConsent,
@@ -34,6 +42,18 @@ const listTitleId = "consent-list-title";
 const listSubtitleId = "consent-list-subtitle";
 let sheetState = createInitialState(data.data.purposes);
 let sheetShell = void 0;
+let detailViewEl = void 0;
+let reduceMotion = false;
+let isSpeaking = false;
+onMount(() => {
+  reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+});
+onDestroy(() => {
+  stopSpeech();
+});
+$: slideDuration = reduceMotion ? 0 : 320;
+$: fadeDuration = reduceMotion ? 0 : 200;
+$: footerFade = { duration: fadeDuration, easing: cubicOut };
 $: notice = data.data.notice;
 $: purposes = getVisiblePurposes(data.data.purposes);
 $: actionSet = getButtonActionSet(data.data);
@@ -51,23 +71,47 @@ $: mandatoryErrorMessage = getMandatoryErrorMessage(labels);
 $: detailConfirmLabel = activePurpose ? getDetailConfirmLabel(activePurpose, labels) : "";
 $: backLabel = getBackLabel(labels);
 $: dismissible = resolveDismissible(data.layout, $ConsentStore.uiOptions.allowDismiss);
-$: sheetState.activeDetailPurposeId, scrollSheetToTop();
+$: playAudioLabel = labels.audio?.trim() || "Play audio";
+function stopSpeechPlayback() {
+  stopSpeech((speaking) => {
+    isSpeaking = speaking;
+  });
+}
+function handlePlayAudio() {
+  if (!isSpeechSupported()) return;
+  if (isSpeaking) {
+    stopSpeechPlayback();
+    return;
+  }
+  const text = viewMode === "detail" && activePurpose ? buildDetailSpeechText(activePurpose, data.data.staticText) : buildListSpeechText(data.data);
+  speak(text, data.data.notice.language, (speaking) => {
+    isSpeaking = speaking;
+  });
+}
 function handleToggleSelect(purposeId, locked) {
   sheetState = toggleSelected(sheetState, purposeId, locked);
 }
 function handleViewDetail(purposeId) {
+  stopSpeechPlayback();
   sheetState = openDetailView(sheetState, purposeId);
+  scrollDetailToTop();
 }
 function handleBackFromDetail() {
+  stopSpeechPlayback();
   sheetState = closeDetailView(sheetState);
 }
 function handleDetailConfirm() {
   if (!activePurpose) return;
+  stopSpeechPlayback();
   sheetState = confirmDetailView(sheetState, activePurpose);
 }
-async function scrollSheetToTop() {
+function handleClose() {
+  stopSpeechPlayback();
+  onClose?.();
+}
+async function scrollDetailToTop() {
   await tick();
-  sheetShell?.getSheetBodyElement()?.scrollTo({ top: 0, behavior: "auto" });
+  detailViewEl?.scrollTo({ top: 0, behavior: reduceMotion ? "auto" : "smooth" });
 }
 async function focusFirstValidationError() {
   await tick();
@@ -78,6 +122,7 @@ async function focusFirstValidationError() {
 }
 async function handleListAction(action) {
   if (shouldBypassValidation(action)) {
+    stopSpeechPlayback();
     await onSubmit?.(buildSubmitPayload(data, action, sheetState.selectedIds));
     return;
   }
@@ -86,6 +131,7 @@ async function handleListAction(action) {
     await focusFirstValidationError();
     return;
   }
+  stopSpeechPlayback();
   await onSubmit?.(buildSubmitPayload(data, action, sheetState.selectedIds));
 }
 </script>
@@ -95,39 +141,64 @@ async function handleListAction(action) {
 	titleId={detailTitleId}
 	subtitleId={viewMode === 'list' ? listSubtitleId : undefined}
 	{dismissible}
-	onClose={viewMode === 'list' ? onClose : undefined}
+	onClose={viewMode === 'list' ? handleClose : undefined}
 	onBack={viewMode === 'detail' ? handleBackFromDetail : undefined}
 	{backLabel}
 >
-	{#if viewMode === 'detail' && activePurpose}
-		<ConsentDetailView purpose={activePurpose} staticText={data.data.staticText} />
-	{:else}
-		<ConsentListView
-			{notice}
-			{purposes}
-			selectedIds={sheetState.selectedIds}
-			{errorPurposeIds}
-			{mandatoryErrorMessage}
-			titleId={listTitleId}
-			subtitleId={listSubtitleId}
-			onToggleSelect={handleToggleSelect}
-			onViewDetail={handleViewDetail}
+	<svelte:fragment slot="header">
+		<ConsentTopNav
+			language={data.data.notice.language}
+			centered={viewMode === 'detail'}
+			{isSpeaking}
+			{playAudioLabel}
+			onPlayAudio={handlePlayAudio}
 		/>
-	{/if}
+	</svelte:fragment>
+
+	<div class="dpdp-sheet-viewport" style:--dpdp-view-slide-duration="{slideDuration}ms">
+		<div class="dpdp-sheet-views-track" class:dpdp-sheet-views-track--detail={viewMode === 'detail'}>
+			<div class="dpdp-sheet-view">
+				<ConsentListView
+					{notice}
+					{purposes}
+					staticText={data.data.staticText}
+					selectedIds={sheetState.selectedIds}
+					{errorPurposeIds}
+					{mandatoryErrorMessage}
+					titleId={listTitleId}
+					subtitleId={listSubtitleId}
+					onToggleSelect={handleToggleSelect}
+					onViewDetail={handleViewDetail}
+				/>
+			</div>
+
+			<div class="dpdp-sheet-view" bind:this={detailViewEl}>
+				{#if activePurpose}
+					<ConsentDetailView purpose={activePurpose} staticText={data.data.staticText} />
+				{/if}
+			</div>
+		</div>
+	</div>
 
 	<svelte:fragment slot="footer">
-		{#if viewMode === 'detail' && activePurpose}
-			<Button
-				variant="primary"
-				label={detailConfirmLabel}
-				onClick={handleDetailConfirm}
-			/>
-		{:else}
-			<ConsentButtonBar
-				{actionSet}
-				inactive={!canSubmit}
-				onAction={handleListAction}
-			/>
-		{/if}
+		<div class="dpdp-sheet-footer-swap">
+			{#if viewMode === 'detail' && activePurpose}
+				<div class="dpdp-sheet-footer-panel" in:fade={footerFade} out:fade={footerFade}>
+					<Button
+						variant="primary"
+						label={detailConfirmLabel}
+						onClick={handleDetailConfirm}
+					/>
+				</div>
+			{:else}
+				<div class="dpdp-sheet-footer-panel" in:fade={footerFade} out:fade={footerFade}>
+					<ConsentButtonBar
+						{actionSet}
+						inactive={!canSubmit}
+						onAction={handleListAction}
+					/>
+				</div>
+			{/if}
+		</div>
 	</svelte:fragment>
 </BottomSheetShell>

@@ -3,6 +3,7 @@ import type { IConsentPurposeSection } from '../../../types';
 declare const __propDef: {
     props: {
         section: IConsentPurposeSection;
+        showDivider?: boolean;
     };
     events: {
         [evt: string]: CustomEvent<any>;
