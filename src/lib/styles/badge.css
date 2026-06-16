@@ -1,18 +1,26 @@
 .dpdp-root .dpdp-badge {
-	display: inline-block;
-	border-radius: 0.25rem;
-	padding: 0.125rem 0.5rem;
-	font-size: 0.75rem;
-	font-weight: 500;
-	line-height: 1rem;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	border-radius: var(--dpdp-radius-sm);
+	padding: 0.25rem 0.5rem;
+	font-size: 0.625rem;
+	font-weight: 400;
+	line-height: 0.75rem;
+	letter-spacing: 0.1px;
+	white-space: nowrap;
+	color: var(--dpdp-color-text);
+	border: 1px solid transparent;
 }
 
 .dpdp-root .dpdp-badge--mandatory {
-	background-color: var(--dpdp-color-bg-primary-subtle);
-	color: var(--dpdp-color-primary);
+	background-color: var(--dpdp-color-badge-mandatory-bg);
+	border-color: var(--dpdp-color-badge-mandatory-border);
+	color: var(--dpdp-color-text);
 }
 
 .dpdp-root .dpdp-badge--optional {
 	background-color: var(--dpdp-color-bg-subtle);
-	color: var(--dpdp-color-text-muted);
+	border-color: var(--dpdp-color-border);
+	color: var(--dpdp-color-text);
 }

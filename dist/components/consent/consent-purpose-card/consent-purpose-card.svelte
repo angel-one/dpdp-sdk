@@ -3,12 +3,14 @@ import Card from "../../common/card/card.svelte";
 import Checkbox from "../../common/checkbox/checkbox.svelte";
 import Chevron from "../../common/chevron/chevron.svelte";
 import { getBadgeVariant, getCheckboxLabel } from "./consent-purpose-card.logic";
+import { getPurposeSummaryBullets } from "../../../utils";
 export let purpose;
 export let selected = false;
 export let showError = false;
 export let mandatoryErrorMessage = "";
 export let onToggleSelect = void 0;
 export let onViewDetail = void 0;
+$: summaryBullets = getPurposeSummaryBullets(purpose);
 </script>
 
 <Card error={showError}>
@@ -35,9 +37,9 @@ export let onViewDetail = void 0;
 				<Chevron expanded={false} />
 			</button>
 
-			{#if purpose.bullets.length}
+			{#if summaryBullets.length}
 				<ul class="dpdp-purpose-card__bullets">
-					{#each purpose.bullets as bullet (bullet)}
+					{#each summaryBullets as bullet (bullet)}
 						<li>{bullet}</li>
 					{/each}
 				</ul>

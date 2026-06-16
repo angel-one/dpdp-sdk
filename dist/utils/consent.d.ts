@@ -7,6 +7,10 @@ export declare const MANDATORY_ERROR_MESSAGE = "This is a mandatory consent. Tic
 export declare function getMandatoryErrorMessage(labels: IConsentLabels): string;
 export declare function getDetailConfirmLabel(purpose: IConsentPurpose, labels: IConsentLabels): string;
 export declare function getBackLabel(labels: IConsentLabels): string;
+/** Card list bullets — CMS `summaryBullets` (legacy: `bullets`). */
+export declare function getPurposeSummaryBullets(purpose: IConsentPurpose): string[];
+/** Card / detail intro — CMS `summary` (legacy: `description`). */
+export declare function getPurposeSummary(purpose: IConsentPurpose): string;
 export declare function resolveDismissible(layout: IConsentLayout, allowDismiss?: boolean): boolean;
 export declare function getVisiblePurposes(purposes: IConsentPurpose[]): IConsentPurpose[];
 export declare function getInitialSelectedIds(purposes: IConsentPurpose[]): Set<string>;

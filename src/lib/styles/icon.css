@@ -26,9 +26,32 @@
 	color: var(--dpdp-color-text-muted);
 }
 
-.dpdp-root .dpdp-consent-icon {
-	width: 1.25rem;
-	height: 1.25rem;
+.dpdp-root .dpdp-back-btn {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
 	flex-shrink: 0;
-	color: var(--dpdp-color-primary);
+	padding: 0.25rem;
+	border: none;
+	border-radius: var(--dpdp-radius-full);
+	background: var(--dpdp-color-bg-subtle);
+	color: var(--dpdp-color-text);
+	cursor: pointer;
+	transition: background-color 0.15s ease;
+}
+
+.dpdp-root .dpdp-back-btn:hover {
+	background-color: var(--dpdp-color-hover);
+}
+
+.dpdp-root .dpdp-back-btn:focus-visible {
+	outline: none;
+	box-shadow: var(--dpdp-focus-ring);
+}
+
+.dpdp-root .dpdp-consent-icon {
+	width: 1.5rem;
+	height: 1.5rem;
+	flex-shrink: 0;
+	color: var(--dpdp-color-text);
 }

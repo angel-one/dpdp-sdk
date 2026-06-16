@@ -2,8 +2,9 @@
 	import Badge from '$lib/components/common/badge/badge.svelte';
 	import Card from '$lib/components/common/card/card.svelte';
 	import Checkbox from '$lib/components/common/checkbox/checkbox.svelte';
-	import Chevron from '$lib/components/common/chevron/chevron.svelte';
+	import ChevronDownIcon from '$lib/components/common/icons/chevron-down-icon.svelte';
 	import { getBadgeVariant, getCheckboxLabel } from './consent-purpose-card.logic';
+	import { getPurposeSummaryBullets } from '$lib/utils';
 	import type { IConsentPurpose } from '$lib/types';
 
 	export let purpose: IConsentPurpose;
@@ -12,45 +13,53 @@
 	export let mandatoryErrorMessage = '';
 	export let onToggleSelect: (() => void) | undefined = undefined;
 	export let onViewDetail: (() => void) | undefined = undefined;
+	$: summaryBullets = getPurposeSummaryBullets(purpose);
+
+	function handleCardKeydown(event: KeyboardEvent) {
+		if (event.key !== 'Enter' && event.key !== ' ') return;
+		event.preventDefault();
+		onViewDetail?.();
+	}
 </script>
 
 <Card error={showError}>
-	<div class="dpdp-purpose-card__row">
-		<Checkbox
-			checked={selected}
-			disabled={purpose.locked}
-			label={getCheckboxLabel(purpose)}
-			onChange={onToggleSelect}
-		/>
+	<div
+		class="dpdp-purpose-card"
+		tabindex="0"
+		aria-label="View details for {purpose.name}"
+		aria-haspopup="dialog"
+		on:click={onViewDetail}
+		on:keydown={handleCardKeydown}
+	>
+		<div class="dpdp-purpose-card__header">
+			<div class="dpdp-purpose-card__main" on:click|stopPropagation on:keydown|stopPropagation>
+				<Checkbox
+					checked={selected}
+					disabled={purpose.locked}
+					label={getCheckboxLabel(purpose)}
+					onChange={onToggleSelect}
+				/>
+				<span class="dpdp-purpose-card__title">{purpose.name}</span>
+				<Badge label={purpose.badge} variant={getBadgeVariant(purpose)} />
+			</div>
 
-		<div class="dpdp-purpose-card__content">
-			<button
-				type="button"
-				class="dpdp-purpose-card__detail-btn"
-				aria-label="View details for {purpose.name}"
-				aria-haspopup="dialog"
-				on:click={onViewDetail}
-			>
-				<span class="dpdp-purpose-card__title-row">
-					<span class="dpdp-purpose-card__title">{purpose.name}</span>
-					<Badge label={purpose.badge} variant={getBadgeVariant(purpose)} />
-				</span>
-				<Chevron expanded={false} />
-			</button>
-
-			{#if purpose.bullets.length}
-				<ul class="dpdp-purpose-card__bullets">
-					{#each purpose.bullets as bullet (bullet)}
-						<li>{bullet}</li>
-					{/each}
-				</ul>
-			{/if}
+			<span class="dpdp-purpose-card__chevron-btn" aria-hidden="true">
+				<ChevronDownIcon />
+			</span>
 		</div>
-	</div>
 
-	{#if showError}
-		<p class="dpdp-purpose-card__error" role="alert" data-dpdp-validation-error tabindex="-1">
-			{mandatoryErrorMessage}
-		</p>
-	{/if}
+		{#if summaryBullets.length}
+			<ul class="dpdp-purpose-card__bullets">
+				{#each summaryBullets as bullet (bullet)}
+					<li>{bullet}</li>
+				{/each}
+			</ul>
+		{/if}
+
+		{#if showError}
+			<p class="dpdp-purpose-card__error" role="alert" data-dpdp-validation-error tabindex="-1">
+				{mandatoryErrorMessage}
+			</p>
+		{/if}
+	</div>
 </Card>

@@ -32,6 +32,16 @@ export function getBackLabel(labels: IConsentLabels) {
 	return labels.back?.trim() || DEFAULT_BACK_LABEL;
 }
 
+/** Card list bullets — CMS `summaryBullets` (legacy: `bullets`). */
+export function getPurposeSummaryBullets(purpose: IConsentPurpose) {
+	return purpose.summaryBullets ?? purpose.bullets ?? [];
+}
+
+/** Card / detail intro — CMS `summary` (legacy: `description`). */
+export function getPurposeSummary(purpose: IConsentPurpose) {
+	return purpose.summary?.trim() || purpose.description?.trim() || '';
+}
+
 export function resolveDismissible(layout: IConsentLayout, allowDismiss?: boolean) {
 	if (allowDismiss !== undefined) return allowDismiss;
 	return layout.dismissible === true;

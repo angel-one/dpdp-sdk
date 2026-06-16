@@ -18,10 +18,20 @@ export interface IConsentPurpose {
     defaultExpanded: boolean;
     status: ConsentPurposeStatus;
     checked: boolean;
-    description: string;
-    bullets: string[];
-    sections: IConsentPurposeSection[];
+    /** Short summary shown on the purpose card. */
+    summary?: string;
+    /** Bullet points shown on the purpose card list view. */
+    summaryBullets?: string[];
+    sections?: IConsentPurposeSection[];
     consentStatus?: string;
+    /** @deprecated CMS now sends `summary` */
+    description?: string;
+    /** @deprecated CMS now sends `summaryBullets` */
+    bullets?: string[];
+}
+export interface IConsentLanguage {
+    code: string;
+    label: string;
 }
 export interface IConsentNotice {
     id: string;
@@ -75,13 +85,26 @@ export interface IConsentActions {
 }
 export interface IConsentData {
     notice: IConsentNotice;
+    languages?: IConsentLanguage[];
     purposes: IConsentPurpose[];
     staticText: IConsentStaticText;
     labels: IConsentLabels;
     flags: IConsentFlags;
     actions: IConsentActions;
 }
+/** CMS layout tree node (schema 1.1.0). SDK renders a fixed UI; layout is retained for CMS contract. */
+export interface IConsentLayoutNode {
+    type: string;
+    props?: Record<string, unknown>;
+    bind?: string;
+    item?: IConsentLayoutNode;
+    children?: IConsentLayoutNode[];
+    showIf?: string;
+}
 export interface IConsentLayout {
+    type?: string;
+    props?: Record<string, unknown>;
+    children?: IConsentLayoutNode[];
     /** When true, the sheet can be dismissed via close button or Escape. Defaults to blocking. */
     dismissible?: boolean;
 }

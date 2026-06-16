@@ -10,7 +10,8 @@
 
 .dpdp-root .dpdp-sheet {
 	display: flex;
-	max-height: 90dvh;
+	height: 80dvh;
+	max-height: 80dvh;
 	width: 100%;
 	max-width: var(--dpdp-sheet-max-width);
 	flex-direction: column;
@@ -58,7 +59,8 @@
 	}
 
 	.dpdp-root .dpdp-sheet {
-		max-height: min(90dvh, 40rem);
+		height: min(80dvh, 40rem);
+		max-height: min(80dvh, 40rem);
 		border-radius: var(--dpdp-radius-xl);
 	}
 }

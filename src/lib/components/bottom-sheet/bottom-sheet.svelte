@@ -4,6 +4,7 @@
 	import ConsentButtonBar from '$lib/components/consent/consent-button-bar/consent-button-bar.svelte';
 	import ConsentDetailView from '$lib/components/consent/consent-detail-view/consent-detail-view.svelte';
 	import ConsentListView from '$lib/components/consent/consent-list-view/consent-list-view.svelte';
+	import ConsentTopNav from '$lib/components/consent/consent-top-nav/consent-top-nav.svelte';
 	import { ConsentStore } from '$lib/stores/consent.store';
 	import {
 		getButtonActionSet,
@@ -14,7 +15,9 @@
 		getMandatoryErrorMessage
 	} from '$lib/utils';
 	import type { ConsentButtonAction, IConsentSubmitPayload, IConsentUiResponse } from '$lib/types';
-	import { tick } from 'svelte';
+	import { fade } from 'svelte/transition';
+	import { cubicOut } from 'svelte/easing';
+	import { onMount, tick } from 'svelte';
 	import {
 		buildSubmitPayload,
 		canSubmitConsent,
@@ -41,6 +44,16 @@
 
 	let sheetState: BottomSheetState = createInitialState(data.data.purposes);
 	let sheetShell: BottomSheetShell | undefined = undefined;
+	let detailViewEl: HTMLDivElement | undefined = undefined;
+	let reduceMotion = false;
+
+	onMount(() => {
+		reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+	});
+
+	$: slideDuration = reduceMotion ? 0 : 320;
+	$: fadeDuration = reduceMotion ? 0 : 200;
+	$: footerFade = { duration: fadeDuration, easing: cubicOut };
 
 	$: notice = data.data.notice;
 	$: purposes = getVisiblePurposes(data.data.purposes);
@@ -60,14 +73,13 @@
 	$: backLabel = getBackLabel(labels);
 	$: dismissible = resolveDismissible(data.layout, $ConsentStore.uiOptions.allowDismiss);
 
-	$: sheetState.activeDetailPurposeId, scrollSheetToTop();
-
 	function handleToggleSelect(purposeId: string, locked: boolean) {
 		sheetState = toggleSelected(sheetState, purposeId, locked);
 	}
 
 	function handleViewDetail(purposeId: string) {
 		sheetState = openDetailView(sheetState, purposeId);
+		scrollDetailToTop();
 	}
 
 	function handleBackFromDetail() {
@@ -79,9 +91,9 @@
 		sheetState = confirmDetailView(sheetState, activePurpose);
 	}
 
-	async function scrollSheetToTop() {
+	async function scrollDetailToTop() {
 		await tick();
-		sheetShell?.getSheetBodyElement()?.scrollTo({ top: 0, behavior: 'auto' });
+		detailViewEl?.scrollTo({ top: 0, behavior: reduceMotion ? 'auto' : 'smooth' });
 	}
 
 	async function focusFirstValidationError() {
@@ -117,35 +129,54 @@
 	onBack={viewMode === 'detail' ? handleBackFromDetail : undefined}
 	{backLabel}
 >
-	{#if viewMode === 'detail' && activePurpose}
-		<ConsentDetailView purpose={activePurpose} staticText={data.data.staticText} />
-	{:else}
-		<ConsentListView
-			{notice}
-			{purposes}
-			selectedIds={sheetState.selectedIds}
-			{errorPurposeIds}
-			{mandatoryErrorMessage}
-			titleId={listTitleId}
-			subtitleId={listSubtitleId}
-			onToggleSelect={handleToggleSelect}
-			onViewDetail={handleViewDetail}
-		/>
-	{/if}
+	<svelte:fragment slot="header">
+		<ConsentTopNav language={data.data.notice.language} centered={viewMode === 'detail'} />
+	</svelte:fragment>
+
+	<div class="dpdp-sheet-viewport" style:--dpdp-view-slide-duration="{slideDuration}ms">
+		<div class="dpdp-sheet-views-track" class:dpdp-sheet-views-track--detail={viewMode === 'detail'}>
+			<div class="dpdp-sheet-view">
+				<ConsentListView
+					{notice}
+					{purposes}
+					staticText={data.data.staticText}
+					selectedIds={sheetState.selectedIds}
+					{errorPurposeIds}
+					{mandatoryErrorMessage}
+					titleId={listTitleId}
+					subtitleId={listSubtitleId}
+					onToggleSelect={handleToggleSelect}
+					onViewDetail={handleViewDetail}
+				/>
+			</div>
+
+			<div class="dpdp-sheet-view" bind:this={detailViewEl}>
+				{#if activePurpose}
+					<ConsentDetailView purpose={activePurpose} staticText={data.data.staticText} />
+				{/if}
+			</div>
+		</div>
+	</div>
 
 	<svelte:fragment slot="footer">
-		{#if viewMode === 'detail' && activePurpose}
-			<Button
-				variant="primary"
-				label={detailConfirmLabel}
-				onClick={handleDetailConfirm}
-			/>
-		{:else}
-			<ConsentButtonBar
-				{actionSet}
-				inactive={!canSubmit}
-				onAction={handleListAction}
-			/>
-		{/if}
+		<div class="dpdp-sheet-footer-swap">
+			{#if viewMode === 'detail' && activePurpose}
+				<div class="dpdp-sheet-footer-panel" in:fade={footerFade} out:fade={footerFade}>
+					<Button
+						variant="primary"
+						label={detailConfirmLabel}
+						onClick={handleDetailConfirm}
+					/>
+				</div>
+			{:else}
+				<div class="dpdp-sheet-footer-panel" in:fade={footerFade} out:fade={footerFade}>
+					<ConsentButtonBar
+						{actionSet}
+						inactive={!canSubmit}
+						onAction={handleListAction}
+					/>
+				</div>
+			{/if}
+		</div>
 	</svelte:fragment>
 </BottomSheetShell>

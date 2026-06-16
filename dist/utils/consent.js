@@ -15,6 +15,14 @@ export function getDetailConfirmLabel(purpose, labels) {
 export function getBackLabel(labels) {
     return labels.back?.trim() || DEFAULT_BACK_LABEL;
 }
+/** Card list bullets — CMS `summaryBullets` (legacy: `bullets`). */
+export function getPurposeSummaryBullets(purpose) {
+    return purpose.summaryBullets ?? purpose.bullets ?? [];
+}
+/** Card / detail intro — CMS `summary` (legacy: `description`). */
+export function getPurposeSummary(purpose) {
+    return purpose.summary?.trim() || purpose.description?.trim() || '';
+}
 export function resolveDismissible(layout, allowDismiss) {
     if (allowDismiss !== undefined)
         return allowDismiss;

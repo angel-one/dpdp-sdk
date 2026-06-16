@@ -9,6 +9,8 @@ export {
 	getInitialExpandedIds,
 	getInitialSelectedIds,
 	getMandatoryErrorMessage,
+	getPurposeSummary,
+	getPurposeSummaryBullets,
 	getUncheckedMandatoryIds,
 	getVisiblePurposes,
 	isConsentUiResponse,
