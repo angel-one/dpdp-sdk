@@ -7,17 +7,22 @@
 	import ConsentTopNav from '$lib/components/consent/consent-top-nav/consent-top-nav.svelte';
 	import { ConsentStore } from '$lib/stores/consent.store';
 	import {
+		buildDetailSpeechText,
+		buildListSpeechText,
 		getButtonActionSet,
 		getVisiblePurposes,
 		resolveDismissible,
 		getDetailConfirmLabel,
 		getBackLabel,
-		getMandatoryErrorMessage
+		getMandatoryErrorMessage,
+		isSpeechSupported,
+		speak,
+		stopSpeech
 	} from '$lib/utils';
 	import type { ConsentButtonAction, IConsentSubmitPayload, IConsentUiResponse } from '$lib/types';
 	import { fade } from 'svelte/transition';
 	import { cubicOut } from 'svelte/easing';
-	import { onMount, tick } from 'svelte';
+	import { onDestroy, onMount, tick } from 'svelte';
 	import {
 		buildSubmitPayload,
 		canSubmitConsent,
@@ -46,9 +51,14 @@
 	let sheetShell: BottomSheetShell | undefined = undefined;
 	let detailViewEl: HTMLDivElement | undefined = undefined;
 	let reduceMotion = false;
+	let isSpeaking = false;
 
 	onMount(() => {
 		reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+	});
+
+	onDestroy(() => {
+		stopSpeech();
 	});
 
 	$: slideDuration = reduceMotion ? 0 : 320;
@@ -72,23 +82,56 @@
 	$: detailConfirmLabel = activePurpose ? getDetailConfirmLabel(activePurpose, labels) : '';
 	$: backLabel = getBackLabel(labels);
 	$: dismissible = resolveDismissible(data.layout, $ConsentStore.uiOptions.allowDismiss);
+	$: playAudioLabel = labels.audio?.trim() || 'Play audio';
+
+	function stopSpeechPlayback() {
+		stopSpeech((speaking) => {
+			isSpeaking = speaking;
+		});
+	}
+
+	function handlePlayAudio() {
+		if (!isSpeechSupported()) return;
+
+		if (isSpeaking) {
+			stopSpeechPlayback();
+			return;
+		}
+
+		const text =
+			viewMode === 'detail' && activePurpose
+				? buildDetailSpeechText(activePurpose, data.data.staticText)
+				: buildListSpeechText(data.data);
+
+		speak(text, data.data.notice.language, (speaking) => {
+			isSpeaking = speaking;
+		});
+	}
 
 	function handleToggleSelect(purposeId: string, locked: boolean) {
 		sheetState = toggleSelected(sheetState, purposeId, locked);
 	}
 
 	function handleViewDetail(purposeId: string) {
+		stopSpeechPlayback();
 		sheetState = openDetailView(sheetState, purposeId);
 		scrollDetailToTop();
 	}
 
 	function handleBackFromDetail() {
+		stopSpeechPlayback();
 		sheetState = closeDetailView(sheetState);
 	}
 
 	function handleDetailConfirm() {
 		if (!activePurpose) return;
+		stopSpeechPlayback();
 		sheetState = confirmDetailView(sheetState, activePurpose);
+	}
+
+	function handleClose() {
+		stopSpeechPlayback();
+		onClose?.();
 	}
 
 	async function scrollDetailToTop() {
@@ -106,6 +149,7 @@
 
 	async function handleListAction(action: ConsentButtonAction) {
 		if (shouldBypassValidation(action)) {
+			stopSpeechPlayback();
 			await onSubmit?.(buildSubmitPayload(data, action, sheetState.selectedIds));
 			return;
 		}
@@ -116,6 +160,7 @@
 			return;
 		}
 
+		stopSpeechPlayback();
 		await onSubmit?.(buildSubmitPayload(data, action, sheetState.selectedIds));
 	}
 </script>
@@ -125,12 +170,18 @@
 	titleId={detailTitleId}
 	subtitleId={viewMode === 'list' ? listSubtitleId : undefined}
 	{dismissible}
-	onClose={viewMode === 'list' ? onClose : undefined}
+	onClose={viewMode === 'list' ? handleClose : undefined}
 	onBack={viewMode === 'detail' ? handleBackFromDetail : undefined}
 	{backLabel}
 >
 	<svelte:fragment slot="header">
-		<ConsentTopNav language={data.data.notice.language} centered={viewMode === 'detail'} />
+		<ConsentTopNav
+			language={data.data.notice.language}
+			centered={viewMode === 'detail'}
+			{isSpeaking}
+			{playAudioLabel}
+			onPlayAudio={handlePlayAudio}
+		/>
 	</svelte:fragment>
 
 	<div class="dpdp-sheet-viewport" style:--dpdp-view-slide-duration="{slideDuration}ms">

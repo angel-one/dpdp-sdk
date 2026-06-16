@@ -70,9 +70,16 @@
 	cursor: pointer;
 }
 
+.dpdp-root .dpdp-consent-top-nav__sound:focus,
 .dpdp-root .dpdp-consent-top-nav__sound:focus-visible {
 	outline: none;
-	box-shadow: var(--dpdp-focus-ring);
+	box-shadow: none;
+}
+
+.dpdp-root .dpdp-consent-top-nav__sound--active {
+	background: var(--dpdp-color-primary);
+	color: var(--dpdp-color-white);
+	border-color: var(--dpdp-color-primary);
 }
 
 /* List view */

@@ -18,3 +18,12 @@ export {
 	resolveDismissible,
 	resolveSelectedIdsForAction
 } from './consent';
+export { buildDetailSpeechText, buildListSpeechText } from './consent-speech';
+export {
+	chunkSpeechText,
+	isSpeechSupported,
+	mapSpeechLanguage,
+	speak,
+	stopSpeech,
+	type SpeechStateHandler
+} from './speech';

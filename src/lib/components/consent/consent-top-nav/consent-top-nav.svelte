@@ -6,8 +6,13 @@
 
 	export let language: string;
 	export let centered = false;
+	export let isSpeaking = false;
+	export let playAudioLabel = 'Play audio';
+	export let stopAudioLabel = 'Stop audio';
+	export let onPlayAudio: (() => void) | undefined = undefined;
 
 	$: label = getLanguageLabel(language);
+	$: soundAriaLabel = isSpeaking ? stopAudioLabel : playAudioLabel;
 </script>
 
 <div
@@ -26,7 +31,14 @@
 			</span>
 		</button>
 
-		<button class="dpdp-consent-top-nav__sound" type="button" aria-label="Play audio">
+		<button
+			class="dpdp-consent-top-nav__sound"
+			class:dpdp-consent-top-nav__sound--active={isSpeaking}
+			type="button"
+			aria-label={soundAriaLabel}
+			aria-pressed={isSpeaking}
+			on:click={onPlayAudio}
+		>
 			<SoundIcon />
 		</button>
 	</div>
