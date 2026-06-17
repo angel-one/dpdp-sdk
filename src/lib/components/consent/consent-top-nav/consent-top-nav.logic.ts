@@ -1,3 +1,5 @@
+import type { IConsentLanguage } from '$lib/types';
+
 const LANGUAGE_LABELS: Record<string, string> = {
 	en: 'English',
 	hi: 'हिन्दी',
@@ -19,4 +21,21 @@ export function getLanguageLabel(language: string): string {
 	if (!language) return '';
 	const normalized = language.trim().toLowerCase();
 	return LANGUAGE_LABELS[normalized] ?? language;
+}
+
+/** Resolves the display label from CMS options, then static fallbacks. */
+export function resolveLanguageLabel(language: string, languages?: IConsentLanguage[]): string {
+	if (!language) return '';
+	const normalized = language.trim().toLowerCase();
+	const fromCms = languages?.find((entry) => entry.code.trim().toLowerCase() === normalized);
+	return fromCms?.label?.trim() || getLanguageLabel(language);
+}
+
+/** Returns CMS language options, or a single entry for the active language. */
+export function getLanguageOptions(
+	languages: IConsentLanguage[] | undefined,
+	currentLanguage: string
+): IConsentLanguage[] {
+	if (languages?.length) return languages;
+	return [{ code: currentLanguage, label: resolveLanguageLabel(currentLanguage) }];
 }

@@ -14,6 +14,10 @@
 		await dpdp.submitConsent(payload);
 	}
 
+	async function handleLanguageChange(languageCode: string) {
+		await dpdp.changeLanguage(languageCode);
+	}
+
 	function handleClose() {
 		dpdp.closeConsent();
 	}
@@ -31,7 +35,13 @@
 	style:--dpdp-z-sheet={zIndexBase + 2}
 >
 	{#if $ConsentStore.hydrated && $ConsentStore.data}
-		<BottomSheet data={$ConsentStore.data} onSubmit={handleSubmit} onClose={handleClose} />
+		<BottomSheet
+			data={$ConsentStore.data}
+			languageChanging={$ConsentStore.loading}
+			onSubmit={handleSubmit}
+			onClose={handleClose}
+			onLanguageChange={handleLanguageChange}
+		/>
 	{/if}
 
 	{#if $ConsentStore.loading}

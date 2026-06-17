@@ -48,6 +48,25 @@ export function closeDetailView(state: BottomSheetState): BottomSheetState {
 	return { ...state, activeDetailPurposeId: null };
 }
 
+/** Keeps list/detail navigation and selections when consent data is re-fetched for a new language. */
+export function reconcileStateAfterLanguageChange(
+	state: BottomSheetState,
+	purposes: IConsentPurpose[]
+): BottomSheetState {
+	const visibleIds = new Set(getVisiblePurposes(purposes).map((purpose) => purpose.id));
+	const selectedIds = new Set(Array.from(state.selectedIds).filter((id) => visibleIds.has(id)));
+	const activeDetailPurposeId =
+		state.activeDetailPurposeId && visibleIds.has(state.activeDetailPurposeId)
+			? state.activeDetailPurposeId
+			: null;
+
+	return {
+		...state,
+		selectedIds,
+		activeDetailPurposeId
+	};
+}
+
 export function confirmDetailView(
 	state: BottomSheetState,
 	purpose: IConsentPurpose

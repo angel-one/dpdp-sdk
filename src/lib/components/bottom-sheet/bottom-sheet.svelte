@@ -34,6 +34,7 @@
 		getViewMode,
 		markValidationAttempted,
 		openDetailView,
+		reconcileStateAfterLanguageChange,
 		shouldBypassValidation,
 		toggleSelected,
 		type BottomSheetState
@@ -43,6 +44,10 @@
 	export let onSubmit: ((payload: IConsentSubmitPayload) => void | Promise<void>) | undefined =
 		undefined;
 	export let onClose: (() => void) | undefined = undefined;
+	export let onLanguageChange:
+		| ((languageCode: string) => void | Promise<void>)
+		| undefined = undefined;
+	export let languageChanging = false;
 
 	const listTitleId = 'consent-list-title';
 	const listSubtitleId = 'consent-list-subtitle';
@@ -52,6 +57,7 @@
 	let detailViewEl: HTMLDivElement | undefined = undefined;
 	let reduceMotion = false;
 	let isSpeaking = false;
+	let previousNoticeLanguage: string | undefined = undefined;
 
 	onMount(() => {
 		reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -84,6 +90,17 @@
 	$: dismissible = resolveDismissible(data.layout, $ConsentStore.uiOptions.allowDismiss);
 	$: playAudioLabel = labels.audio?.trim() || 'Play audio';
 
+	$: noticeLanguage = data.data.notice.language;
+	$: if (previousNoticeLanguage === undefined) {
+		previousNoticeLanguage = noticeLanguage;
+	} else if (noticeLanguage !== previousNoticeLanguage) {
+		sheetState = reconcileStateAfterLanguageChange(sheetState, data.data.purposes);
+		previousNoticeLanguage = noticeLanguage;
+		if (sheetState.activeDetailPurposeId) {
+			void tick().then(() => scrollDetailToTop());
+		}
+	}
+
 	function stopSpeechPlayback() {
 		stopSpeech((speaking) => {
 			isSpeaking = speaking;
@@ -91,7 +108,7 @@
 	}
 
 	function handlePlayAudio() {
-		if (!isSpeechSupported()) return;
+		if (!isSpeechSupported() || languageChanging) return;
 
 		if (isSpeaking) {
 			stopSpeechPlayback();
@@ -106,6 +123,12 @@
 		speak(text, data.data.notice.language, (speaking) => {
 			isSpeaking = speaking;
 		});
+	}
+
+	async function handleLanguageChange(languageCode: string) {
+		if (languageChanging || languageCode === data.data.notice.language) return;
+		stopSpeechPlayback();
+		await onLanguageChange?.(languageCode);
 	}
 
 	function handleToggleSelect(purposeId: string, locked: boolean) {
@@ -177,10 +200,13 @@
 	<svelte:fragment slot="header">
 		<ConsentTopNav
 			language={data.data.notice.language}
+			languages={data.data.languages}
 			centered={viewMode === 'detail'}
+			disabled={languageChanging}
 			{isSpeaking}
 			{playAudioLabel}
 			onPlayAudio={handlePlayAudio}
+			onLanguageChange={handleLanguageChange}
 		/>
 	</svelte:fragment>
 
