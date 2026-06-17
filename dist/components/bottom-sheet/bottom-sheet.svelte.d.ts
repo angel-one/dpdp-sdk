@@ -5,6 +5,8 @@ declare const __propDef: {
         data: IConsentUiResponse;
         onSubmit?: ((payload: IConsentSubmitPayload) => void | Promise<void>) | undefined;
         onClose?: (() => void) | undefined;
+        onLanguageChange?: ((languageCode: string) => void | Promise<void>) | undefined;
+        languageChanging?: boolean;
     };
     events: {
         [evt: string]: CustomEvent<any>;

@@ -20,3 +20,17 @@ export function getLanguageLabel(language) {
     const normalized = language.trim().toLowerCase();
     return LANGUAGE_LABELS[normalized] ?? language;
 }
+/** Resolves the display label from CMS options, then static fallbacks. */
+export function resolveLanguageLabel(language, languages) {
+    if (!language)
+        return '';
+    const normalized = language.trim().toLowerCase();
+    const fromCms = languages?.find((entry) => entry.code.trim().toLowerCase() === normalized);
+    return fromCms?.label?.trim() || getLanguageLabel(language);
+}
+/** Returns CMS language options, or a single entry for the active language. */
+export function getLanguageOptions(languages, currentLanguage) {
+    if (languages?.length)
+        return languages;
+    return [{ code: currentLanguage, label: resolveLanguageLabel(currentLanguage) }];
+}

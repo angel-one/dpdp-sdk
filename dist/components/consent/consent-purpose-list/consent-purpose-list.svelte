@@ -1,9 +1,11 @@
 <script>import ConsentPurposeCard from "../consent-purpose-card/consent-purpose-card.svelte";
 export let purposes = [];
 export let selectedIds = /* @__PURE__ */ new Set();
+export let selectedChannels = /* @__PURE__ */ new Map();
 export let errorPurposeIds = /* @__PURE__ */ new Set();
 export let mandatoryErrorMessage = "";
 export let onToggleSelect = void 0;
+export let onToggleChannel = void 0;
 export let onViewDetail = void 0;
 </script>
 
@@ -13,9 +15,11 @@ export let onViewDetail = void 0;
 			<ConsentPurposeCard
 				{purpose}
 				selected={selectedIds.has(purpose.id)}
+				selectedChannelIds={selectedChannels.get(purpose.id) ?? new Set()}
 				showError={errorPurposeIds.has(purpose.id)}
 				{mandatoryErrorMessage}
 				onToggleSelect={() => onToggleSelect?.(purpose.id, purpose.locked)}
+				onToggleChannel={(channelCode) => onToggleChannel?.(purpose.id, channelCode)}
 				onViewDetail={() => onViewDetail?.(purpose.id)}
 			/>
 		</div>

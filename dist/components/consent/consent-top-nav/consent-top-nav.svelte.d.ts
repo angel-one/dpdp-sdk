@@ -1,12 +1,16 @@
 import { SvelteComponent } from "svelte";
+import type { IConsentLanguage } from '../../../types';
 declare const __propDef: {
     props: {
         language: string;
+        languages?: IConsentLanguage[] | undefined;
         centered?: boolean;
+        disabled?: boolean;
         isSpeaking?: boolean;
         playAudioLabel?: string;
         stopAudioLabel?: string;
         onPlayAudio?: (() => void) | undefined;
+        onLanguageChange?: ((languageCode: string) => void | Promise<void>) | undefined;
     };
     events: {
         [evt: string]: CustomEvent<any>;

@@ -5,11 +5,13 @@ export let notice;
 export let purposes = [];
 export let staticText = void 0;
 export let selectedIds = /* @__PURE__ */ new Set();
+export let selectedChannels = /* @__PURE__ */ new Map();
 export let errorPurposeIds = /* @__PURE__ */ new Set();
 export let titleId = "";
 export let subtitleId = "";
 export let mandatoryErrorMessage = "";
 export let onToggleSelect = void 0;
+export let onToggleChannel = void 0;
 export let onViewDetail = void 0;
 $: staticTextEntries = staticText ? getStaticTextEntries(staticText) : [];
 </script>
@@ -24,9 +26,11 @@ $: staticTextEntries = staticText ? getStaticTextEntries(staticText) : [];
 <ConsentPurposeList
 	{purposes}
 	{selectedIds}
+	{selectedChannels}
 	{errorPurposeIds}
 	{mandatoryErrorMessage}
 	{onToggleSelect}
+	{onToggleChannel}
 	{onViewDetail}
 />
 

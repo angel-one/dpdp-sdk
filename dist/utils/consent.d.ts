@@ -1,4 +1,4 @@
-import type { ConsentButtonAction, IConsentActionSet, IConsentData, IConsentLayout, IConsentLabels, IConsentPurpose, IConsentUiResponse } from '../types';
+import type { ConsentButtonAction, IConsentActionSet, IConsentChannel, IConsentData, IConsentLayout, IConsentLabels, IConsentPurpose, IConsentUiResponse } from '../types';
 export declare const DEFAULT_MANDATORY_ERROR_MESSAGE = "This is a mandatory consent. Tick to continue.";
 export declare const DEFAULT_GOT_IT_LABEL = "GOT IT";
 export declare const DEFAULT_BACK_LABEL = "Back to consent list";
@@ -14,6 +14,14 @@ export declare function getPurposeSummary(purpose: IConsentPurpose): string;
 export declare function resolveDismissible(layout: IConsentLayout, allowDismiss?: boolean): boolean;
 export declare function getVisiblePurposes(purposes: IConsentPurpose[]): IConsentPurpose[];
 export declare function getInitialSelectedIds(purposes: IConsentPurpose[]): Set<string>;
+export declare function getInitialSelectedChannels(purposes: IConsentPurpose[]): Map<string, Set<string>>;
+/** Whether a channel checkbox is non-interactive (CMS locked or pre-checked without opt-out). */
+export declare function isChannelCheckboxDisabled(channel: IConsentChannel): boolean;
+export declare function canToggleChannel(channel: IConsentChannel, selectedInState: boolean): boolean;
+export declare function buildChannelSelections(purposes: IConsentPurpose[], selectedIds: Set<string>, selectedChannels: Map<string, Set<string>>): {
+    purposeId: string;
+    channels: string[];
+}[];
 export declare function getInitialExpandedIds(purposes: IConsentPurpose[]): Set<string>;
 export declare function getButtonActionSet(data: IConsentData): IConsentActionSet;
 export declare function areAllMandatorySelected(purposes: IConsentPurpose[], selectedIds: Set<string>): boolean;

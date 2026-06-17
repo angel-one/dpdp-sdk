@@ -36,6 +36,39 @@ export function getInitialSelectedIds(purposes) {
         .filter((purpose) => purpose.checked || purpose.mandatory)
         .map((purpose) => purpose.id));
 }
+export function getInitialSelectedChannels(purposes) {
+    const selectedChannels = new Map();
+    for (const purpose of getVisiblePurposes(purposes)) {
+        if (!purpose.channels?.length)
+            continue;
+        selectedChannels.set(purpose.id, new Set(purpose.channels.filter((channel) => channel.checked).map((channel) => channel.code)));
+    }
+    return selectedChannels;
+}
+/** Whether a channel checkbox is non-interactive (CMS locked or pre-checked without opt-out). */
+export function isChannelCheckboxDisabled(channel) {
+    return channel.locked || (!channel.optOutAllowed && channel.checked);
+}
+export function canToggleChannel(channel, selectedInState) {
+    if (channel.locked)
+        return false;
+    if (selectedInState && !channel.optOutAllowed && channel.checked)
+        return false;
+    return true;
+}
+export function buildChannelSelections(purposes, selectedIds, selectedChannels) {
+    return getVisiblePurposes(purposes)
+        .filter((purpose) => purpose.channels?.length)
+        .map((purpose) => ({
+        purposeId: purpose.id,
+        channels: Array.from(selectedChannels.get(purpose.id) ?? [])
+    }))
+        .filter((entry) => {
+        if (entry.channels.length === 0)
+            return false;
+        return selectedIds.has(entry.purposeId);
+    });
+}
 export function getInitialExpandedIds(purposes) {
     return new Set(getVisiblePurposes(purposes)
         .filter((purpose) => purpose.defaultExpanded)

@@ -72,6 +72,24 @@ class Dpdp {
             await this.setConsentError(message);
         }
     }
+    /** Fetches consent UI for a new language and updates the sheet in place. */
+    async changeLanguage(languageCode, options = {}) {
+        await this.getIsSdkInitialized();
+        assertNonEmpty(languageCode, 'languageCode');
+        const nextLanguage = languageCode.trim();
+        if (nextLanguage === this.#languageCode) {
+            return;
+        }
+        const previousLanguage = this.#languageCode;
+        this.#languageCode = nextLanguage;
+        try {
+            await this.fetchConsentUi({ timeoutMs: options.timeoutMs });
+        }
+        catch (error) {
+            this.#languageCode = previousLanguage;
+            throw error;
+        }
+    }
     /** Client-side fallback fetch via the host app's proxy route. */
     async fetchConsentUi(options = {}) {
         await this.getIsSdkInitialized();

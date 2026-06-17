@@ -2,15 +2,22 @@
 import Card from "../../common/card/card.svelte";
 import Checkbox from "../../common/checkbox/checkbox.svelte";
 import ChevronDownIcon from "../../common/icons/chevron-down-icon.svelte";
-import { getBadgeVariant, getCheckboxLabel } from "./consent-purpose-card.logic";
-import { getPurposeSummaryBullets } from "../../../utils";
+import { getPurposeSummaryBullets, isChannelCheckboxDisabled } from "../../../utils";
+import {
+  getBadgeVariant,
+  getChannelCheckboxLabel,
+  getCheckboxLabel
+} from "./consent-purpose-card.logic";
 export let purpose;
 export let selected = false;
+export let selectedChannelIds = /* @__PURE__ */ new Set();
 export let showError = false;
 export let mandatoryErrorMessage = "";
 export let onToggleSelect = void 0;
+export let onToggleChannel = void 0;
 export let onViewDetail = void 0;
 $: summaryBullets = getPurposeSummaryBullets(purpose);
+$: channels = purpose.channels ?? [];
 function handleCardKeydown(event) {
   if (event.key !== "Enter" && event.key !== " ") return;
   event.preventDefault();
@@ -50,6 +57,30 @@ function handleCardKeydown(event) {
 					<li>{bullet}</li>
 				{/each}
 			</ul>
+		{/if}
+
+		{#if channels.length}
+			<div
+				class="dpdp-purpose-card__channels"
+				role="group"
+				aria-label="{purpose.name} channels"
+				on:click|stopPropagation
+				on:keydown|stopPropagation
+			>
+				{#each channels as channel (channel.code)}
+					{@const checked = selectedChannelIds.has(channel.code)}
+					{@const disabled = isChannelCheckboxDisabled(channel)}
+					<div class="dpdp-purpose-card__channel">
+						<Checkbox
+							{checked}
+							{disabled}
+							label={getChannelCheckboxLabel(channel)}
+							onChange={() => onToggleChannel?.(channel.code)}
+						/>
+						<span class="dpdp-purpose-card__channel-name">{channel.name}</span>
+					</div>
+				{/each}
+			</div>
 		{/if}
 
 		{#if showError}

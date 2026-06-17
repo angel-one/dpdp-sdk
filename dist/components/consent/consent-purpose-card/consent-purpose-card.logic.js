@@ -7,3 +7,6 @@ export function getBadgeVariant(purpose) {
 export function getCheckboxLabel(purpose) {
     return `Select ${purpose.name}`;
 }
+export function getChannelCheckboxLabel(channel) {
+    return `Select ${channel.name}`;
+}

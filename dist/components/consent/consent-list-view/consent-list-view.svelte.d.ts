@@ -6,11 +6,13 @@ declare const __propDef: {
         purposes?: IConsentPurpose[];
         staticText?: IConsentStaticText | undefined;
         selectedIds?: Set<string>;
+        selectedChannels?: Map<string, Set<string>>;
         errorPurposeIds?: Set<string>;
         titleId?: string;
         subtitleId?: string;
         mandatoryErrorMessage?: string;
         onToggleSelect?: ((purposeId: string, locked: boolean) => void) | undefined;
+        onToggleChannel?: ((purposeId: string, channelCode: string) => void) | undefined;
         onViewDetail?: ((purposeId: string) => void) | undefined;
     };
     events: {

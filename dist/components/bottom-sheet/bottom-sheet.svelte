@@ -32,12 +32,16 @@ import {
   getViewMode,
   markValidationAttempted,
   openDetailView,
+  reconcileStateAfterLanguageChange,
   shouldBypassValidation,
+  toggleChannel,
   toggleSelected
 } from "./bottom-sheet.logic";
 export let data;
 export let onSubmit = void 0;
 export let onClose = void 0;
+export let onLanguageChange = void 0;
+export let languageChanging = false;
 const listTitleId = "consent-list-title";
 const listSubtitleId = "consent-list-subtitle";
 let sheetState = createInitialState(data.data.purposes);
@@ -45,6 +49,7 @@ let sheetShell = void 0;
 let detailViewEl = void 0;
 let reduceMotion = false;
 let isSpeaking = false;
+let previousNoticeLanguage = void 0;
 onMount(() => {
   reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 });
@@ -72,13 +77,23 @@ $: detailConfirmLabel = activePurpose ? getDetailConfirmLabel(activePurpose, lab
 $: backLabel = getBackLabel(labels);
 $: dismissible = resolveDismissible(data.layout, $ConsentStore.uiOptions.allowDismiss);
 $: playAudioLabel = labels.audio?.trim() || "Play audio";
+$: noticeLanguage = data.data.notice.language;
+$: if (previousNoticeLanguage === void 0) {
+  previousNoticeLanguage = noticeLanguage;
+} else if (noticeLanguage !== previousNoticeLanguage) {
+  sheetState = reconcileStateAfterLanguageChange(sheetState, data.data.purposes);
+  previousNoticeLanguage = noticeLanguage;
+  if (sheetState.activeDetailPurposeId) {
+    void tick().then(() => scrollDetailToTop());
+  }
+}
 function stopSpeechPlayback() {
   stopSpeech((speaking) => {
     isSpeaking = speaking;
   });
 }
 function handlePlayAudio() {
-  if (!isSpeechSupported()) return;
+  if (!isSpeechSupported() || languageChanging) return;
   if (isSpeaking) {
     stopSpeechPlayback();
     return;
@@ -88,8 +103,16 @@ function handlePlayAudio() {
     isSpeaking = speaking;
   });
 }
+async function handleLanguageChange(languageCode) {
+  if (languageChanging || languageCode === data.data.notice.language) return;
+  stopSpeechPlayback();
+  await onLanguageChange?.(languageCode);
+}
 function handleToggleSelect(purposeId, locked) {
   sheetState = toggleSelected(sheetState, purposeId, locked);
+}
+function handleToggleChannel(purposeId, channelCode) {
+  sheetState = toggleChannel(sheetState, purposeId, channelCode, data.data.purposes);
 }
 function handleViewDetail(purposeId) {
   stopSpeechPlayback();
@@ -123,7 +146,7 @@ async function focusFirstValidationError() {
 async function handleListAction(action) {
   if (shouldBypassValidation(action)) {
     stopSpeechPlayback();
-    await onSubmit?.(buildSubmitPayload(data, action, sheetState.selectedIds));
+    await onSubmit?.(buildSubmitPayload(data, action, sheetState));
     return;
   }
   if (!canSubmit) {
@@ -132,7 +155,7 @@ async function handleListAction(action) {
     return;
   }
   stopSpeechPlayback();
-  await onSubmit?.(buildSubmitPayload(data, action, sheetState.selectedIds));
+  await onSubmit?.(buildSubmitPayload(data, action, sheetState));
 }
 </script>
 
@@ -148,10 +171,13 @@ async function handleListAction(action) {
 	<svelte:fragment slot="header">
 		<ConsentTopNav
 			language={data.data.notice.language}
+			languages={data.data.languages}
 			centered={viewMode === 'detail'}
+			disabled={languageChanging}
 			{isSpeaking}
 			{playAudioLabel}
 			onPlayAudio={handlePlayAudio}
+			onLanguageChange={handleLanguageChange}
 		/>
 	</svelte:fragment>
 
@@ -163,11 +189,13 @@ async function handleListAction(action) {
 					{purposes}
 					staticText={data.data.staticText}
 					selectedIds={sheetState.selectedIds}
+					selectedChannels={sheetState.selectedChannels}
 					{errorPurposeIds}
 					{mandatoryErrorMessage}
 					titleId={listTitleId}
 					subtitleId={listSubtitleId}
 					onToggleSelect={handleToggleSelect}
+					onToggleChannel={handleToggleChannel}
 					onViewDetail={handleViewDetail}
 				/>
 			</div>

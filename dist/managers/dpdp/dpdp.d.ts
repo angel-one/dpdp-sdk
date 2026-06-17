@@ -10,6 +10,10 @@ declare class Dpdp {
      * falls back to a client-side proxy fetch on server failure.
      */
     loadConsent(options?: LoadConsentOptions): Promise<void>;
+    /** Fetches consent UI for a new language and updates the sheet in place. */
+    changeLanguage(languageCode: string, options?: {
+        timeoutMs?: number;
+    }): Promise<void>;
     /** Client-side fallback fetch via the host app's proxy route. */
     fetchConsentUi(options?: {
         timeoutMs?: number;

@@ -4,9 +4,11 @@ declare const __propDef: {
     props: {
         purpose: IConsentPurpose;
         selected?: boolean;
+        selectedChannelIds?: Set<string>;
         showError?: boolean;
         mandatoryErrorMessage?: string;
         onToggleSelect?: (() => void) | undefined;
+        onToggleChannel?: ((channelCode: string) => void) | undefined;
         onViewDetail?: (() => void) | undefined;
     };
     events: {
