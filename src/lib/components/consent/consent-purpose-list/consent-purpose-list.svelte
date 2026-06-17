@@ -4,9 +4,13 @@
 
 	export let purposes: IConsentPurpose[] = [];
 	export let selectedIds: Set<string> = new Set();
+	export let selectedChannels: Map<string, Set<string>> = new Map();
 	export let errorPurposeIds: Set<string> = new Set();
 	export let mandatoryErrorMessage = '';
 	export let onToggleSelect: ((purposeId: string, locked: boolean) => void) | undefined = undefined;
+	export let onToggleChannel:
+		| ((purposeId: string, channelCode: string) => void)
+		| undefined = undefined;
 	export let onViewDetail: ((purposeId: string) => void) | undefined = undefined;
 </script>
 
@@ -16,9 +20,11 @@
 			<ConsentPurposeCard
 				{purpose}
 				selected={selectedIds.has(purpose.id)}
+				selectedChannelIds={selectedChannels.get(purpose.id) ?? new Set()}
 				showError={errorPurposeIds.has(purpose.id)}
 				{mandatoryErrorMessage}
 				onToggleSelect={() => onToggleSelect?.(purpose.id, purpose.locked)}
+				onToggleChannel={(channelCode) => onToggleChannel?.(purpose.id, channelCode)}
 				onViewDetail={() => onViewDetail?.(purpose.id)}
 			/>
 		</div>

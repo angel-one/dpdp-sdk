@@ -8,11 +8,15 @@
 	export let purposes: IConsentPurpose[] = [];
 	export let staticText: IConsentStaticText | undefined = undefined;
 	export let selectedIds: Set<string> = new Set();
+	export let selectedChannels: Map<string, Set<string>> = new Map();
 	export let errorPurposeIds: Set<string> = new Set();
 	export let titleId = '';
 	export let subtitleId = '';
 	export let mandatoryErrorMessage = '';
 	export let onToggleSelect: ((purposeId: string, locked: boolean) => void) | undefined = undefined;
+	export let onToggleChannel:
+		| ((purposeId: string, channelCode: string) => void)
+		| undefined = undefined;
 	export let onViewDetail: ((purposeId: string) => void) | undefined = undefined;
 
 	$: staticTextEntries = staticText ? getStaticTextEntries(staticText) : [];
@@ -28,9 +32,11 @@
 <ConsentPurposeList
 	{purposes}
 	{selectedIds}
+	{selectedChannels}
 	{errorPurposeIds}
 	{mandatoryErrorMessage}
 	{onToggleSelect}
+	{onToggleChannel}
 	{onViewDetail}
 />
 

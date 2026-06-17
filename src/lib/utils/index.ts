@@ -1,5 +1,8 @@
 export {
 	areAllMandatorySelected,
+	buildChannelSelections,
+	isChannelCheckboxDisabled,
+	canToggleChannel,
 	DEFAULT_BACK_LABEL,
 	DEFAULT_GOT_IT_LABEL,
 	DEFAULT_MANDATORY_ERROR_MESSAGE,
@@ -7,6 +10,7 @@ export {
 	getButtonActionSet,
 	getDetailConfirmLabel,
 	getInitialExpandedIds,
+	getInitialSelectedChannels,
 	getInitialSelectedIds,
 	getMandatoryErrorMessage,
 	getPurposeSummary,

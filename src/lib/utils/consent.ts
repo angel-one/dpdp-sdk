@@ -1,6 +1,7 @@
 import type {
 	ConsentButtonAction,
 	IConsentActionSet,
+	IConsentChannel,
 	IConsentData,
 	IConsentLayout,
 	IConsentLabels,
@@ -57,6 +58,49 @@ export function getInitialSelectedIds(purposes: IConsentPurpose[]) {
 			.filter((purpose) => purpose.checked || purpose.mandatory)
 			.map((purpose) => purpose.id)
 	);
+}
+
+export function getInitialSelectedChannels(purposes: IConsentPurpose[]) {
+	const selectedChannels = new Map<string, Set<string>>();
+
+	for (const purpose of getVisiblePurposes(purposes)) {
+		if (!purpose.channels?.length) continue;
+
+		selectedChannels.set(
+			purpose.id,
+			new Set(purpose.channels.filter((channel) => channel.checked).map((channel) => channel.code))
+		);
+	}
+
+	return selectedChannels;
+}
+
+/** Whether a channel checkbox is non-interactive (CMS locked or pre-checked without opt-out). */
+export function isChannelCheckboxDisabled(channel: IConsentChannel) {
+	return channel.locked || (!channel.optOutAllowed && channel.checked);
+}
+
+export function canToggleChannel(channel: IConsentChannel, selectedInState: boolean) {
+	if (channel.locked) return false;
+	if (selectedInState && !channel.optOutAllowed && channel.checked) return false;
+	return true;
+}
+
+export function buildChannelSelections(
+	purposes: IConsentPurpose[],
+	selectedIds: Set<string>,
+	selectedChannels: Map<string, Set<string>>
+) {
+	return getVisiblePurposes(purposes)
+		.filter((purpose) => purpose.channels?.length)
+		.map((purpose) => ({
+			purposeId: purpose.id,
+			channels: Array.from(selectedChannels.get(purpose.id) ?? [])
+		}))
+		.filter((entry) => {
+			if (entry.channels.length === 0) return false;
+			return selectedIds.has(entry.purposeId);
+		});
 }
 
 export function getInitialExpandedIds(purposes: IConsentPurpose[]) {

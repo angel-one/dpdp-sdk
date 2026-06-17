@@ -9,6 +9,15 @@ export interface IConsentPurposeSection {
 	description: string;
 }
 
+export interface IConsentChannel {
+	code: string;
+	name: string;
+	mandatory: boolean;
+	optOutAllowed: boolean;
+	checked: boolean;
+	locked: boolean;
+}
+
 export interface IConsentPurpose {
 	id: string;
 	name: string;
@@ -30,6 +39,7 @@ export interface IConsentPurpose {
 	description?: string;
 	/** @deprecated CMS now sends `summaryBullets` */
 	bullets?: string[];
+	channels?: IConsentChannel[];
 }
 
 export interface IConsentLanguage {
@@ -149,5 +159,11 @@ export interface IConsentStoreState {
 export interface IConsentSubmitPayload {
 	action: ConsentButtonAction;
 	selectedPurposeIds: string[];
+	channelSelections?: IConsentPurposeChannelSelection[];
 	noticeId: string;
+}
+
+export interface IConsentPurposeChannelSelection {
+	purposeId: string;
+	channels: string[];
 }

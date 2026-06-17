@@ -36,6 +36,7 @@
 		openDetailView,
 		reconcileStateAfterLanguageChange,
 		shouldBypassValidation,
+		toggleChannel,
 		toggleSelected,
 		type BottomSheetState
 	} from './bottom-sheet.logic';
@@ -135,6 +136,10 @@
 		sheetState = toggleSelected(sheetState, purposeId, locked);
 	}
 
+	function handleToggleChannel(purposeId: string, channelCode: string) {
+		sheetState = toggleChannel(sheetState, purposeId, channelCode, data.data.purposes);
+	}
+
 	function handleViewDetail(purposeId: string) {
 		stopSpeechPlayback();
 		sheetState = openDetailView(sheetState, purposeId);
@@ -173,7 +178,7 @@
 	async function handleListAction(action: ConsentButtonAction) {
 		if (shouldBypassValidation(action)) {
 			stopSpeechPlayback();
-			await onSubmit?.(buildSubmitPayload(data, action, sheetState.selectedIds));
+			await onSubmit?.(buildSubmitPayload(data, action, sheetState));
 			return;
 		}
 
@@ -184,7 +189,7 @@
 		}
 
 		stopSpeechPlayback();
-		await onSubmit?.(buildSubmitPayload(data, action, sheetState.selectedIds));
+		await onSubmit?.(buildSubmitPayload(data, action, sheetState));
 	}
 </script>
 
@@ -218,11 +223,13 @@
 					{purposes}
 					staticText={data.data.staticText}
 					selectedIds={sheetState.selectedIds}
+					selectedChannels={sheetState.selectedChannels}
 					{errorPurposeIds}
 					{mandatoryErrorMessage}
 					titleId={listTitleId}
 					subtitleId={listSubtitleId}
 					onToggleSelect={handleToggleSelect}
+					onToggleChannel={handleToggleChannel}
 					onViewDetail={handleViewDetail}
 				/>
 			</div>

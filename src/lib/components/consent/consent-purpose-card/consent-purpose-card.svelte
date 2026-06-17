@@ -3,17 +3,25 @@
 	import Card from '$lib/components/common/card/card.svelte';
 	import Checkbox from '$lib/components/common/checkbox/checkbox.svelte';
 	import ChevronDownIcon from '$lib/components/common/icons/chevron-down-icon.svelte';
-	import { getBadgeVariant, getCheckboxLabel } from './consent-purpose-card.logic';
-	import { getPurposeSummaryBullets } from '$lib/utils';
+	import { getPurposeSummaryBullets, isChannelCheckboxDisabled } from '$lib/utils';
+	import {
+		getBadgeVariant,
+		getChannelCheckboxLabel,
+		getCheckboxLabel
+	} from './consent-purpose-card.logic';
 	import type { IConsentPurpose } from '$lib/types';
 
 	export let purpose: IConsentPurpose;
 	export let selected = false;
+	export let selectedChannelIds: Set<string> = new Set();
 	export let showError = false;
 	export let mandatoryErrorMessage = '';
 	export let onToggleSelect: (() => void) | undefined = undefined;
+	export let onToggleChannel: ((channelCode: string) => void) | undefined = undefined;
 	export let onViewDetail: (() => void) | undefined = undefined;
+
 	$: summaryBullets = getPurposeSummaryBullets(purpose);
+	$: channels = purpose.channels ?? [];
 
 	function handleCardKeydown(event: KeyboardEvent) {
 		if (event.key !== 'Enter' && event.key !== ' ') return;
@@ -54,6 +62,30 @@
 					<li>{bullet}</li>
 				{/each}
 			</ul>
+		{/if}
+
+		{#if channels.length}
+			<div
+				class="dpdp-purpose-card__channels"
+				role="group"
+				aria-label="{purpose.name} channels"
+				on:click|stopPropagation
+				on:keydown|stopPropagation
+			>
+				{#each channels as channel (channel.code)}
+					{@const checked = selectedChannelIds.has(channel.code)}
+					{@const disabled = isChannelCheckboxDisabled(channel)}
+					<div class="dpdp-purpose-card__channel">
+						<Checkbox
+							{checked}
+							{disabled}
+							label={getChannelCheckboxLabel(channel)}
+							onChange={() => onToggleChannel?.(channel.code)}
+						/>
+						<span class="dpdp-purpose-card__channel-name">{channel.name}</span>
+					</div>
+				{/each}
+			</div>
 		{/if}
 
 		{#if showError}

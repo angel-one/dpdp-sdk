@@ -1,4 +1,4 @@
-import type { IConsentPurpose } from '$lib/types';
+import type { IConsentChannel, IConsentPurpose } from '$lib/types';
 
 export function getPurposeDetailsId(purposeId: string) {
 	return `purpose-details-${purposeId}`;
@@ -10,4 +10,8 @@ export function getBadgeVariant(purpose: IConsentPurpose) {
 
 export function getCheckboxLabel(purpose: IConsentPurpose) {
 	return `Select ${purpose.name}`;
+}
+
+export function getChannelCheckboxLabel(channel: IConsentChannel) {
+	return `Select ${channel.name}`;
 }
