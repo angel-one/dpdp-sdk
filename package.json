@@ -1,6 +1,6 @@
 {
 	"name": "dpdp-sdk",
-	"version": "0.4.5",
+	"version": "0.4.6",
 	"type": "module",
 	"engines": {
 		"node": ">=18.0.0"

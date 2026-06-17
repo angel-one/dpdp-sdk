@@ -13,3 +13,13 @@
 	margin: 0;
 	padding: 0;
 }
+
+/* Default lists to unstyled; opt-in with component classes (e.g. purpose card bullets). */
+.dpdp-root ul,
+.dpdp-root ol {
+	list-style: none;
+}
+
+.dpdp-root li {
+	list-style: none;
+}

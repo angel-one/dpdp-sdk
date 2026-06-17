@@ -90,7 +90,7 @@ onDestroy(() => {
 			</button>
 
 			{#if menuOpen && canChangeLanguage}
-				<ul
+				<div
 					id={menuId}
 					class="dpdp-consent-top-nav__lang-menu"
 					role="listbox"
@@ -98,25 +98,23 @@ onDestroy(() => {
 				>
 					{#each options as option (option.code)}
 						{@const selected = option.code.trim().toLowerCase() === language.trim().toLowerCase()}
-						<li role="presentation">
-							<button
-								class="dpdp-consent-top-nav__lang-option"
-								class:dpdp-consent-top-nav__lang-option--selected={selected}
-								type="button"
-								role="option"
-								aria-selected={selected}
-								on:click={() => handleLanguageSelect(option.code)}
-							>
-								<span class="dpdp-consent-top-nav__lang-option-label">{option.label}</span>
-								{#if selected}
-									<span class="dpdp-consent-top-nav__lang-option-check" aria-hidden="true">
-										<CheckIcon />
-									</span>
-								{/if}
-							</button>
-						</li>
+						<button
+							class="dpdp-consent-top-nav__lang-option"
+							class:dpdp-consent-top-nav__lang-option--selected={selected}
+							type="button"
+							role="option"
+							aria-selected={selected}
+							on:click={() => handleLanguageSelect(option.code)}
+						>
+							<span class="dpdp-consent-top-nav__lang-option-label">{option.label}</span>
+							{#if selected}
+								<span class="dpdp-consent-top-nav__lang-option-check" aria-hidden="true">
+									<CheckIcon />
+								</span>
+							{/if}
+						</button>
 					{/each}
-				</ul>
+				</div>
 			{/if}
 		</div>
 
